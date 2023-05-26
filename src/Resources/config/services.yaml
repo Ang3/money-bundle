@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  # Autowiring
+  Ang3\Bundle\MoneyBundle\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Resources}'

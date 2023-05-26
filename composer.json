@@ -1,0 +1,46 @@
+{
+  "name": "ang3/money-bundle",
+  "type": "symfony-bundle",
+  "homepage": "https://github.com/Ang3/money-bundle",
+  "description": "Integration of brick/money for Symfony apps.",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Joanis ROUANET",
+      "homepage": "https://github.com/Ang3"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "brick/money": "^0.8.0",
+    "symfony/config": "^6.0",
+    "symfony/dependency-injection": "^6.0",
+    "symfony/http-kernel": "^6.0",
+    "symfony/intl": "^6.0"
+  },
+  "require-dev": {
+    "doctrine/doctrine-bundle": "^2.0",
+    "doctrine/orm": "^2.10",
+    "symfony/form": "^6.0",
+    "symfony/serializer": "^6.0",
+    "symfony/twig-bundle": "^6.0",
+    "symfony/validator": "^6.0",
+    "symfony/test-pack": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {"Ang3\\Bundle\\MoneyBundle\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": { "Ang3\\Bundle\\MoneyBundle\\Tests\\": "tests/" }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "suggest": {
+    "doctrine/doctrine-bundle": "Add Money DBAL mapping type and/or use Price embeddable.",
+    "symfony/form": "Use money into your forms.",
+    "symfony/serializer": "Serialize/deserialize Price embeddable or Money objects using Symfony library.",
+    "symfony/twig-bundle": "Format and manipulate Money in Twig templates.",
+    "symfony/validator": "Use custom validation constraints on Money objects."
+  }
+}
