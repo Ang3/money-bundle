@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
 use Brick\Math\RoundingMode;
@@ -293,7 +302,7 @@ class Price
     {
         $amount = $arguments[0] ?? 0;
 
-        if (!is_int($amount)) {
+        if (!\is_int($amount)) {
             throw new \InvalidArgumentException(sprintf('The first argument #0 must be an integer (currency: "%s").', $method));
         }
 
@@ -305,7 +314,7 @@ class Price
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int $amount, Currency|string $currency): self
+    public static function create(int $amount, Currency|string|null $currency): self
     {
         $currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
 
@@ -346,12 +355,15 @@ class Price
         return $this;
     }
 
-    public function monetize(?int $roundingMode = null) : Money
+    public function monetize(?int $roundingMode = null): Money
     {
-        return Money::ofMinor($this->amount, Currency::of($this->currency), roundingMode: $roundingMode ?: RoundingMode::DOWN);
+        /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
+        $roundingMode = $roundingMode ?: RoundingMode::DOWN;
+
+        return Money::ofMinor($this->amount, Currency::of($this->currency), roundingMode: $roundingMode);
     }
 
-    public function update(Money $money) : self
+    public function update(Money $money): self
     {
         $this->amount = $money->getMinorAmount()->toInt();
         $this->currency = $money->getCurrency()->getCurrencyCode();

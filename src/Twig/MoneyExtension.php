@@ -1,9 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\Twig;
 
 use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
-use Ang3\Bundle\MoneyBundle\Entity\Price;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Symfony\Component\Intl\Currencies;
@@ -14,8 +22,10 @@ use Twig\TwigFunction;
 
 class MoneyExtension extends AbstractExtension
 {
-    public function __construct(private readonly MoneyConfig         $moneyConfig,
-                                private readonly TranslatorInterface $translator)
+    public function __construct(
+        private readonly MoneyConfig $moneyConfig,
+        private readonly TranslatorInterface $translator
+    )
     {
     }
 

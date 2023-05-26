@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\Form\DataTransformer;
 
 use Brick\Math\Exception\MathException;
@@ -11,11 +20,11 @@ use Brick\Money\Money;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
- * Transforms between a Money/Money value objects and integer value
+ * Transforms between a Money/Money value objects and integer value.
  */
 class MoneyToIntegerTransformer implements DataTransformerInterface
 {
-     private Currency $currency;
+    private Currency $currency;
 
     /**
      * @param non-empty-string $currency
@@ -35,7 +44,7 @@ class MoneyToIntegerTransformer implements DataTransformerInterface
     public function transform($value): int
     {
         if (null === $value) {
-            return '0';
+            return 0;
         }
 
         return $value->getMinorAmount()->toInt();
@@ -52,6 +61,6 @@ class MoneyToIntegerTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value): Money
     {
-        return Money::of($value, $this->currency);
+        return Money::of((int) $value, $this->currency);
     }
 }

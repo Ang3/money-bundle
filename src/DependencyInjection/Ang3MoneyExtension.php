@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\DependencyInjection;
 
 use Ang3\Bundle\MoneyBundle\DBAL\Types\CurrencyType;
@@ -19,10 +28,10 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $config['currencies'] = $config['currencies'] ?? [];
+        $config['currencies'] ??= [];
         $defaultCurrency = (string) $config['default_currency'];
 
-        if (!in_array($defaultCurrency, $config['currencies'])) {
+        if (!\in_array($defaultCurrency, $config['currencies'], true)) {
             $config['currencies'][] = $defaultCurrency;
         }
 
@@ -32,7 +41,7 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
         $loader->load('services.yaml');
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $bundles = $container->getParameter('kernel.bundles');
 
@@ -40,8 +49,8 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
             $container->prependExtensionConfig('doctrine', [
                 'dbal' => [
                     'types' => [
-                        'currency' => CurrencyType::class
-                    ]
+                        'currency' => CurrencyType::class,
+                    ],
                 ],
                 'orm' => [
                     'mappings' => [

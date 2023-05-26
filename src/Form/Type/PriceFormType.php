@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
 use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
@@ -25,9 +34,10 @@ class PriceFormType extends AbstractType
         $currency = $options['currency'];
 
         $builder
-            ->add('amount', MoneyType::class, array_merge($options['amount_options'], [
-                'currency' => $currency
-            ]));
+            ->add('amount', MoneyType::class, array_merge((array) $options['amount_options'], [
+                'currency' => $currency,
+            ]))
+        ;
 
         if (true === $options['currency_field']) {
             $builder->add('currency', CurrencyType::class, (array) $options['currency_options']);

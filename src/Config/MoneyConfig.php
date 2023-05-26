@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\Config;
 
 use Ang3\Bundle\MoneyBundle\Entity\Price;
@@ -20,7 +29,7 @@ final class MoneyConfig
     {
         if (null === self::$currencies) {
             $currencyCodes = $this->parameters['currencies'] ?: Currencies::getCurrencyCodes();
-            self::$currencies = array_combine($currencyCodes, array_map(fn($currencyCode) => ucfirst(Currencies::getName($currencyCode)), $currencyCodes));
+            self::$currencies = array_combine($currencyCodes, array_map(fn ($currencyCode) => ucfirst(Currencies::getName($currencyCode)), $currencyCodes));
         }
 
         return self::$currencies;

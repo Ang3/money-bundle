@@ -1,10 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of package ang3/money-bundle
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Ang3\Bundle\MoneyBundle\Validator\Constraints;
 
 use Ang3\Bundle\MoneyBundle\Entity\Price;
-use Symfony\Component\Validator\Constraint;
 use Ang3\Bundle\MoneyBundle\Validator\Constraints\Price as PriceConstraint;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -30,7 +39,8 @@ class PriceValidator extends ConstraintValidator
         if ($amountViolations->count() > 0) {
             $this->context
                 ->buildViolation($constraint->invalidAmountMessage)
-                ->addViolation();
+                ->addViolation()
+            ;
         }
 
         foreach ($amountViolations as $violation) {
@@ -42,7 +52,8 @@ class PriceValidator extends ConstraintValidator
         if ($currencyViolations->count() > 0) {
             $this->context
                 ->buildViolation($constraint->invalidCurrencyMessage)
-                ->addViolation();
+                ->addViolation()
+            ;
         }
 
         foreach ($currencyViolations as $violation) {
@@ -55,13 +66,20 @@ class PriceValidator extends ConstraintValidator
      */
     private function buildViolationAtPath(ConstraintViolationInterface $violation, string $path): void
     {
-        $this->context
+        $plural = $violation->getPlural();
+
+        $violationBuilder = $this->context
             ->buildViolation($violation->getMessage())
             ->atPath($path)
             ->setParameters($violation->getParameters())
-            ->setPlural($violation->getPlural())
             ->setCause($violation->getCause())
             ->setCode($violation->getCode())
-            ->addViolation();
+        ;
+
+        if ($plural) {
+            $violationBuilder->setPlural($plural);
+        }
+
+        $violationBuilder->addViolation();
     }
 }
