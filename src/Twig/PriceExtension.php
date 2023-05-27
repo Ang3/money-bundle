@@ -38,7 +38,7 @@ class PriceExtension extends AbstractExtension
         ];
     }
 
-    public function createPrice(int $amount, ?string $currency = null): Price
+    public function createPrice(int $amount, string $currency = null): Price
     {
         return Price::create($amount, $currency);
     }
@@ -48,7 +48,7 @@ class PriceExtension extends AbstractExtension
         return Price::wrapMoney($money);
     }
 
-    public function formatPrice(Price $money, ?string $locale = null): string
+    public function formatPrice(Price $money, string $locale = null): string
     {
         return $this->moneyExtension->formatMoney($money->monetize(), $locale);
     }

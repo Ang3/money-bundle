@@ -34,8 +34,6 @@ class CurrencyType extends StringType
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @param string|null $value
      */
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Currency

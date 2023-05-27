@@ -25,8 +25,7 @@ class Price extends Constraint
         public array $currencyConstraints = [],
         array $groups = null,
         mixed $payload = null
-    )
-    {
+    ) {
         parent::__construct([], $groups, $payload);
     }
 }
