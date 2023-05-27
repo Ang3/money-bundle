@@ -12,11 +12,15 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Serializer;
 
 use Ang3\Bundle\MoneyBundle\Entity\Price;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PriceNormalizer implements NormalizerInterface
+class PriceNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
+    use NormalizerAwareTrait;
+
     public function __construct(private readonly TranslatorInterface $translator)
     {
     }
@@ -31,10 +35,6 @@ class PriceNormalizer implements NormalizerInterface
      */
     public function normalize(mixed $object, string $format = null, array $context = []): ?array
     {
-        return !$object->isEmpty() ? [
-            'amount' => $object->getAmount(),
-            'currency' => $object->getCurrency(),
-            'literal' => $object->monetize()->formatTo($this->translator->getLocale()),
-        ] : null;
+        return $this->normalizer->normalize($object->monetize(), $format, $context);
     }
 }
