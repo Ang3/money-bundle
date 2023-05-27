@@ -11,15 +11,12 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Config;
 
-use Ang3\Bundle\MoneyBundle\Entity\Price;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final class MoneyConfig
 {
     public function __construct(#[Autowire('%ang3_money.config%')] private readonly array $parameters)
     {
-        // We get money parameters, so we hydrate price default currency right now, it's great.
-        Price::setDefaultCurrency($this->getDefaultCurrency());
     }
 
     public function getCurrencies(): array

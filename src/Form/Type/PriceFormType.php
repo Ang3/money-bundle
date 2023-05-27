@@ -30,22 +30,28 @@ class PriceFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var Price $price */
+        $price = $options['data'];
+        $currencyField = null === $price->getCurrency() && false !== $options['currency_field'];
+
         /** @var non-empty-string $currency */
         $currency = $options['currency'];
 
         $builder
             ->add('amount', MoneyType::class, array_merge((array) $options['amount_options'], [
+                'required' => $options['required'],
                 'currency' => $currency,
             ]))
         ;
 
-        if (true === $options['currency_field']) {
+        if ($currencyField) {
             $currencyOptions = (array) $options['currency_options'];
 
             if (!\array_key_exists('preferred_choices', $currencyOptions)) {
                 $currencyOptions['preferred_choices'] = $this->moneyConfig->getCurrencies();
             }
 
+            $currencyOptions['required'] = $options['required'];
             $builder->add('currency', CurrencyType::class, $currencyOptions);
         }
     }
@@ -57,6 +63,7 @@ class PriceFormType extends AbstractType
         $resolver
             ->setDefaults([
                 'class' => Price::class,
+                'required' => false,
                 'currency' => $defaultCurrency,
                 'currency_field' => true,
                 'amount_options' => [],

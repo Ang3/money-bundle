@@ -33,7 +33,6 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
         }
 
         $container->setParameter('ang3_money.config', $config);
-
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
     }

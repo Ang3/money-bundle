@@ -274,29 +274,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Embeddable]
 class Price
 {
-    public const DEFAULT_CURRENCY = 'EUR';
-
-    /**
-     * @internal
-     *
-     * This variable is hydrated at runtime when the bundle is loaded.
-     * In case of no-runtime, we set a default currency manually (EUR).
-     */
-    private static string $defaultCurrency = self::DEFAULT_CURRENCY;
-
     #[Assert\Range(min: -2147483647, max: 2147483647)] // MariaDB limits
-    #[ORM\Column(length: 15)]
-    private int $amount;
+    #[ORM\Column(length: 15, nullable: true)]
+    private ?int $amount = null;
 
     #[Assert\Currency]
-    #[ORM\Column(length: 3)]
-    private string $currency;
-
-    public function __construct(int $amount = 0, string $currency = null)
-    {
-        $this->amount = $amount;
-        $this->currency = $currency ?: self::$defaultCurrency;
-    }
+    #[Assert\Expression(expression: 'value or this.isEmpty()', message: 'You must set a currency for the amount.')]
+    #[ORM\Column(length: 3, nullable: true)]
+    private ?string $currency = null;
 
     public static function __callStatic(string $method, array $arguments = []): self
     {
@@ -314,41 +299,37 @@ class Price
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int $amount, Currency|string|null $currency): self
+    public static function create(int|float|null $amount, Currency|string|null $currency): self
     {
-        $currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
+        $price = new self();
+        $price->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
 
-        return new self($amount, $currency);
+        if (null !== $price->currency) {
+            $money = null !== $amount ? (\is_float($amount) ? Money::of($amount, $price->currency) : Money::ofMinor($amount, $price->currency)) : Money::zero($price->currency);
+            $price->update($money);
+        }
+
+        return $price;
     }
 
-    public static function setDefaultCurrency(string $defaultCurrency): void
-    {
-        self::$defaultCurrency = $defaultCurrency;
-    }
-
-    public static function getDefaultCurrency(): ?string
-    {
-        return self::$defaultCurrency;
-    }
-
-    public function getAmount(): int
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
 
-    public function setAmount(int $amount = 0): self
+    public function setAmount(?int $amount): self
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getCurrency(): string
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    public function setCurrency(string $currency): self
+    public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;
 
@@ -357,10 +338,14 @@ class Price
 
     public function monetize(int $roundingMode = null): Money
     {
+        if ($this->isEmpty()) {
+            throw new \BadMethodCallException('The price is empty - You must set amount and currency to call this method.');
+        }
+
         /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
         $roundingMode = $roundingMode ?: RoundingMode::DOWN;
 
-        return Money::ofMinor($this->amount, Currency::of($this->currency), roundingMode: $roundingMode);
+        return Money::ofMinor((int) $this->amount, Currency::of((string) $this->currency), roundingMode: $roundingMode);
     }
 
     public function update(Money $money): self
@@ -369,5 +354,10 @@ class Price
         $this->currency = $money->getCurrency()->getCurrencyCode();
 
         return $this;
+    }
+
+    public function isEmpty(): bool
+    {
+        return null === $this->amount || null === $this->currency;
     }
 }

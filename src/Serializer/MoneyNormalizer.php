@@ -24,7 +24,7 @@ class MoneyNormalizer implements NormalizerInterface
     /**
      * @param Money $object
      */
-    public function normalize(mixed $object, string $format = null, array $context = []): ?array
+    public function normalize(mixed $object, string $format = null, array $context = []): array
     {
         return [
             'amount' => $object->getMinorAmount()->toInt(),
