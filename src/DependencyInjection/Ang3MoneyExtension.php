@@ -20,9 +20,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();

@@ -292,7 +292,7 @@ class Price
     #[ORM\Column(length: 3)]
     private string $currency;
 
-    public function __construct(int $amount = 0, ?string $currency = null)
+    public function __construct(int $amount = 0, string $currency = null)
     {
         $this->amount = $amount;
         $this->currency = $currency ?: self::$defaultCurrency;
@@ -355,7 +355,7 @@ class Price
         return $this;
     }
 
-    public function monetize(?int $roundingMode = null): Money
+    public function monetize(int $roundingMode = null): Money
     {
         /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
         $roundingMode = $roundingMode ?: RoundingMode::DOWN;
