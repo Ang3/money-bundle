@@ -40,7 +40,13 @@ class PriceFormType extends AbstractType
         ;
 
         if (true === $options['currency_field']) {
-            $builder->add('currency', CurrencyType::class, (array) $options['currency_options']);
+            $currencyOptions = (array) $options['currency_options'];
+
+            if (!array_key_exists('preferred_choices', $currencyOptions)) {
+                $currencyOptions['preferred_choices'] = $this->moneyConfig->getCurrencies();
+            }
+
+            $builder->add('currency', CurrencyType::class, $currencyOptions);
         }
     }
 
