@@ -11,11 +11,9 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Config;
 
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-
 final class MoneyConfig
 {
-    public function __construct(#[Autowire('%ang3_money.config%')] private readonly array $parameters)
+    public function __construct(private readonly array $parameters)
     {
     }
 

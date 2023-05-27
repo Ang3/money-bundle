@@ -9,4 +9,6 @@ services:
     exclude: '../../{DependencyInjection,Resources}'
 
   Ang3\Bundle\MoneyBundle\Config\MoneyConfig:
+    arguments:
+      $parameters: '%ang3_money.config%'
     public: true
