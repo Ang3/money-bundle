@@ -34,7 +34,7 @@ Step 2: Configure the bundle
 Create the file `config/packages/ang3_money.yaml`, and add the contents below:
 
 ```yaml
-# config/packages/ang3_aws_polly.yaml
+# config/packages/ang3_money.yaml
 ang3_money: ~
 ```
 
