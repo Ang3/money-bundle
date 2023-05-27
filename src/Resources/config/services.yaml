@@ -7,3 +7,9 @@ services:
   Ang3\Bundle\MoneyBundle\:
     resource: '../../*'
     exclude: '../../{DependencyInjection,Resources}'
+
+  Ang3\Bundle\MoneyBundle\Config\MoneyConfig:
+    public: true
+
+  ang3_money.config:
+    alias: Ang3\Bundle\MoneyBundle\Config\MoneyConfig
