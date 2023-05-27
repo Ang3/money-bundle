@@ -299,13 +299,13 @@ class Price
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int|float|null $amount = null, Currency|string|null $currency = null): self
+    public static function create(int|float|string|null $amount = null, Currency|string|null $currency = null, bool $isMinor = true): self
     {
         $price = new self();
         $price->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
 
         if (null !== $price->currency) {
-            $money = null !== $amount ? (\is_float($amount) ? Money::of($amount, $price->currency) : Money::ofMinor($amount, $price->currency)) : Money::zero($price->currency);
+            $money = null !== $amount ? ($isMinor ? Money::ofMinor($amount, $price->currency) : Money::of($amount, $price->currency)) : Money::zero($price->currency);
             $price->update($money);
         }
 

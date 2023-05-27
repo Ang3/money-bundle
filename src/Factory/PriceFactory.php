@@ -21,10 +21,10 @@ class PriceFactory
     {
     }
 
-    public function create(int|float|null $amount = null, Currency|string|null $currency = null): Price
+    public function create(int|float|string|null $amount = null, Currency|string|null $currency = null, bool $isMinor = true): Price
     {
         $currency = $currency ?: $this->moneyConfig->getDefaultCurrency();
 
-        return Price::create($amount, $currency);
+        return Price::create($amount, $currency, $isMinor);
     }
 }
