@@ -25,8 +25,7 @@ class MoneyExtension extends AbstractExtension
     public function __construct(
         private readonly MoneyConfig $moneyConfig,
         private readonly TranslatorInterface $translator
-    )
-    {
+    ) {
     }
 
     public function getFunctions(): array
@@ -44,7 +43,7 @@ class MoneyExtension extends AbstractExtension
         ];
     }
 
-    public function createMoney(int $amount, Currency|string|null $currency = null, bool $fromMinor = true): string
+    public function createMoney(int $amount, Currency|string|null $currency = null, bool $fromMinor = true): Money
     {
         $currency = $currency ? ($currency instanceof Currency ? $currency : Currency::of($currency)) : $this->moneyConfig->getDefaultCurrency();
 

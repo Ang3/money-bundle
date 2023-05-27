@@ -69,7 +69,7 @@ class PriceValidator extends ConstraintValidator
         $plural = $violation->getPlural();
 
         $violationBuilder = $this->context
-            ->buildViolation($violation->getMessage())
+            ->buildViolation((string) $violation->getMessage())
             ->atPath($path)
             ->setParameters($violation->getParameters())
             ->setCause($violation->getCause())
