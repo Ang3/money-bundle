@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\DependencyInjection;
 
+use Ang3\Bundle\MoneyBundle\Entity\Price;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Intl\Currencies;
@@ -35,8 +36,8 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->end()
             ->scalarNode('default_currency')
-            ->isRequired()
-            ->defaultValue('EUR')
+            ->cannotBeEmpty()
+            ->defaultValue(Price::DEFAULT_CURRENCY)
             ->end()
             ->end()
         ;
