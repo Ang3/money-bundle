@@ -25,11 +25,13 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $config['default_currency'] ??= null;
         $config['currencies'] ??= [];
-        $defaultCurrency = (string) $config['default_currency'];
 
-        if (!\in_array($defaultCurrency, $config['currencies'], true)) {
-            $config['currencies'][] = $defaultCurrency;
+        if ($config['default_currency']) {
+            if (!\in_array($config['default_currency'], $config['currencies'], true)) {
+                $config['currencies'][] = $config['default_currency'];
+            }
         }
 
         $container->setParameter('ang3_money.config', $config);

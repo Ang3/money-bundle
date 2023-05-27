@@ -15,4 +15,5 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class Ang3MoneyBundle extends Bundle
 {
+    public const DEFAULT_CURRENCY = 'EUR';
 }

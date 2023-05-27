@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\DependencyInjection;
 
+use Ang3\Bundle\MoneyBundle\Ang3MoneyBundle;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Intl\Currencies;
@@ -25,7 +26,7 @@ class Configuration implements ConfigurationInterface
             ->getRootNode()
             ->fixXmlConfig('currency', 'currencies')
             ->children()
-            ->scalarNode('default_currency')->end()
+            ->scalarNode('default_currency')->cannotBeEmpty()->defaultValue(Ang3MoneyBundle::DEFAULT_CURRENCY)->end()
             ->arrayNode('currencies')
             ->scalarPrototype()
             ->isRequired()
