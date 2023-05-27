@@ -50,7 +50,7 @@ class PriceExtension extends AbstractExtension
 
     public function formatPrice(Price $money, string $locale = null): string
     {
-        return $this->moneyExtension->formatMoney($money->monetize(), $locale);
+        return $this->moneyExtension->formatMoney($money->getMoney(), $locale);
     }
 
     public function getName(): string

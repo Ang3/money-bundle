@@ -35,6 +35,6 @@ class PriceNormalizer implements NormalizerInterface, NormalizerAwareInterface
      */
     public function normalize(mixed $object, string $format = null, array $context = []): ?array
     {
-        return $this->normalizer->normalize($object->monetize(), $format, $context);
+        return $this->normalizer->normalize($object->getMoney(), $format, $context);
     }
 }

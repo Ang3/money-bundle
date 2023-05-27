@@ -336,7 +336,7 @@ class Price
         return $this;
     }
 
-    public function monetize(int $roundingMode = null): Money
+    public function getMoney(int $roundingMode = null): Money
     {
         if ($this->isEmpty()) {
             throw new \BadMethodCallException('The price is empty - You must set amount and currency to call this method.');
