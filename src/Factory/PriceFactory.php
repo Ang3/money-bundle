@@ -21,7 +21,7 @@ class PriceFactory
     {
     }
 
-    public function create(int|float|null $amount, Currency|string|null $currency): Price
+    public function create(int|float|null $amount = null, Currency|string|null $currency = null): Price
     {
         $currency = $currency ?: $this->moneyConfig->getDefaultCurrency();
 

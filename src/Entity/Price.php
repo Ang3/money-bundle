@@ -299,7 +299,7 @@ class Price
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int|float|null $amount, Currency|string|null $currency): self
+    public static function create(int|float|null $amount = null, Currency|string|null $currency = null): self
     {
         $price = new self();
         $price->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
