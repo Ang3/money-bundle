@@ -357,12 +357,12 @@ class EmbeddedMoney
         return $this;
     }
 
-    public function modify(?int $roundingMode = null): EmbeddedMoneyModifier
+    public function modify(int $roundingMode = null): EmbeddedMoneyModifier
     {
         return new EmbeddedMoneyModifier($this, $roundingMode);
     }
 
-    public function getMoney(?int $roundingMode = null): Money
+    public function getMoney(int $roundingMode = null): Money
     {
         if ($this->isEmpty()) {
             throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
