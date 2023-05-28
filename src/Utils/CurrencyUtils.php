@@ -16,7 +16,7 @@ use Symfony\Component\Intl\Currencies;
 
 class CurrencyUtils
 {
-    public static function parse(string $currencyCode, ?int $scale = null): Currency
+    public static function parse(string $currencyCode, int $scale = null): Currency
     {
         if (self::isISOCurrency($currencyCode)) {
             return Currency::of($currencyCode);

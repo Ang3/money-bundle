@@ -51,7 +51,7 @@ class MoneyExtension extends AbstractExtension
         return $fromMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
     }
 
-    public function formatMoney(Money|EmbeddedMoney $money, ?string $locale = null): string
+    public function formatMoney(Money|EmbeddedMoney $money, string $locale = null): string
     {
         $money = $money instanceof EmbeddedMoney ? $money->getMoney() : $money;
         $locale = $locale ?: $this->translator->getLocale();
