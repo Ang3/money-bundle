@@ -27,15 +27,46 @@ class Configuration implements ConfigurationInterface
             ->fixXmlConfig('currency', 'currencies')
             ->children()
             ->scalarNode('default_currency')->cannotBeEmpty()->defaultValue(Ang3MoneyBundle::DEFAULT_CURRENCY)->end()
-            ->arrayNode('currencies')
+            ->arrayNode('iso_currencies')
+            ->addDefaultsIfNotSet()
+            ->children()
+            ->booleanNode('enabled')->defaultValue(true)->end()
+            ->arrayNode('codes')
             ->scalarPrototype()
-            ->isRequired()
             ->validate()
             ->ifNotInArray(Currencies::getCurrencyCodes())
             ->thenInvalid('Invalid currency "%s".')
             ->end()
             ->end()
             ->end()
+            ->end()
+            ->end()
+            ->arrayNode('custom_currencies')
+            ->useAttributeAsKey('name')
+            ->addDefaultsIfNotSet()
+            ->arrayPrototype()
+            ->children()
+            ->scalarNode('code')->isRequired()->cannotBeEmpty()->end()
+            ->integerNode('scale')->isRequired()->cannotBeEmpty()->min(0)->end()
+            ->scalarNode('name')->info('Currency name - If NULL, the code is used as name.')->end()
+            ->end()
+            ->end()
+            ->end()
+            ->end()
+            ->validate()
+            ->ifTrue(function ($v) {
+                $isoCurrencyCodes = ($v['iso_currencies']['enabled'] ?? false) ? (($v['iso_currencies']['codes'] ?? []) ?: Currencies::getCurrencyCodes()) : [];
+                $customCurrencyCodes = array_reduce($v['custom_currencies'] ?? [], function ($result, $parameters) {
+                    $result[] = $parameters['code'];
+
+                    return $result;
+                }, []);
+
+                $allCurrencyCodes = array_merge($isoCurrencyCodes, $customCurrencyCodes);
+
+                return \in_array($v['default_currency'], $allCurrencyCodes, true);
+            })
+            ->thenInvalid('The default currency is not valid - In case of ISO currency, make sure ISO currencies are enabled and the currency is not filtered, otherwise do not forget to register the custom currency.')
             ->end()
         ;
 

@@ -15,14 +15,16 @@ use Attribute;
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-class Price extends Constraint
+class ValidMoney extends Constraint
 {
-    public string $invalidAmountMessage = 'The amount is not valid.';
-    public string $invalidCurrencyMessage = 'The currency is not valid.';
+    public string $invalidISOCurrencyMessage = 'You must set a valid ISO currency.';
+    public string $invalidCurrencyMessage = 'The currency "{{ value }}" is not supported (Possible value: {{ values }}).';
 
     public function __construct(
         public array $amountConstraints = [],
         public array $currencyConstraints = [],
+        public bool $isoCurrency = true,
+        public bool $required = false,
         array $groups = null,
         mixed $payload = null
     ) {

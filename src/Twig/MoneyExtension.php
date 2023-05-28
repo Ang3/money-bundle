@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Twig;
 
 use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
+use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Symfony\Component\Intl\Currencies;
@@ -50,8 +51,9 @@ class MoneyExtension extends AbstractExtension
         return $fromMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
     }
 
-    public function formatMoney(Money $money, string $locale = null): string
+    public function formatMoney(Money|EmbeddedMoney $money, ?string $locale = null): string
     {
+        $money = $money instanceof EmbeddedMoney ? $money->getMoney() : $money;
         $locale = $locale ?: $this->translator->getLocale();
 
         return $money->formatTo($locale);

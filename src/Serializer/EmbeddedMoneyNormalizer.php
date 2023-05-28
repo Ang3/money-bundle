@@ -11,30 +11,25 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Serializer;
 
-use Ang3\Bundle\MoneyBundle\Entity\Price;
+use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PriceNormalizer implements NormalizerInterface, NormalizerAwareInterface
+class EmbeddedMoneyNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 
-    public function __construct(private readonly TranslatorInterface $translator)
-    {
-    }
-
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
-        return $data instanceof Price;
+        return $data instanceof EmbeddedMoney;
     }
 
     /**
-     * @param Price $object
+     * @param EmbeddedMoney $object
      */
     public function normalize(mixed $object, string $format = null, array $context = []): ?array
     {
-        return $this->normalizer->normalize($object->getMoney(), $format, $context);
+        return !$object->isEmpty() ? (array) $this->normalizer->normalize($object->getMoney(), $format, $context) : null;
     }
 }

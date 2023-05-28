@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\DependencyInjection;
 
-use Ang3\Bundle\MoneyBundle\DBAL\Types\CurrencyType;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -24,17 +23,8 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        $config['default_currency'] ??= null;
-        $config['currencies'] ??= [];
-
-        if ($config['default_currency']) {
-            if (!\in_array($config['default_currency'], $config['currencies'], true)) {
-                $config['currencies'][] = $config['default_currency'];
-            }
-        }
-
         $container->setParameter('ang3_money.config', $config);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
     }
@@ -45,11 +35,6 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
 
         if (isset($bundles['DoctrineBundle'])) {
             $container->prependExtensionConfig('doctrine', [
-                'dbal' => [
-                    'types' => [
-                        'currency' => CurrencyType::class,
-                    ],
-                ],
                 'orm' => [
                     'mappings' => [
                         'Ang3MoneyBundle' => [

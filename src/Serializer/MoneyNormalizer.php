@@ -35,10 +35,10 @@ class MoneyNormalizer implements NormalizerInterface
     {
         $locale = $context[self::LOCALE_KEY] ?? $this->translator->getLocale();
 
-        return !$object->isEmpty() ? [
+        return [
             'amount' => $object->getMinorAmount()->toInt(),
             'currency' => $object->getCurrency()->getCurrencyCode(),
             'literal' => $object->formatTo($locale),
-        ] : null;
+        ];
     }
 }

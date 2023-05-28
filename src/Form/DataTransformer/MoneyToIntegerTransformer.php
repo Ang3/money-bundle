@@ -61,6 +61,6 @@ class MoneyToIntegerTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value): Money
     {
-        return Money::of((int) $value, $this->currency);
+        return null !== $value ? Money::of($value, $this->currency) : Money::zero($this->currency);
     }
 }

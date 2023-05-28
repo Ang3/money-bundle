@@ -6,7 +6,7 @@ services:
   # Autowiring
   Ang3\Bundle\MoneyBundle\:
     resource: '../../*'
-    exclude: '../../{DependencyInjection,Resources}'
+    exclude: '../../{DependencyInjection,Entity,Resources}'
 
   Ang3\Bundle\MoneyBundle\Config\MoneyConfig:
     arguments:

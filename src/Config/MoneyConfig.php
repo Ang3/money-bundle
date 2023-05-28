@@ -11,15 +11,28 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Config;
 
+use Symfony\Component\Intl\Currencies;
+
 final class MoneyConfig
 {
     public function __construct(private readonly array $parameters)
     {
     }
 
-    public function getCurrencies(): array
+    public function getISOCurrencies(): array
     {
-        return $this->parameters['currencies'];
+        $ISOCurrenciesEnabled = (bool) $this->parameters['iso_currencies']['enabled'];
+
+        if (!$ISOCurrenciesEnabled) {
+            return [];
+        }
+
+        return $this->parameters['iso_currencies']['codes'] ?: Currencies::getCurrencyCodes();
+    }
+
+    public function getCustomCurrencies(): array
+    {
+        return $this->parameters['custom_currencies'];
     }
 
     public function getDefaultCurrency(): string

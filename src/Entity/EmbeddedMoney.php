@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
+use Ang3\Bundle\MoneyBundle\Utils\CurrencyUtils;
 use Brick\Math\RoundingMode;
 use Brick\Money\Currency;
 use Brick\Money\Money;
@@ -272,16 +273,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class Price
+class EmbeddedMoney
 {
-    #[Assert\Range(min: -2147483647, max: 2147483647)] // MariaDB limits
-    #[ORM\Column(length: 15, nullable: true)]
-    private ?int $amount = null;
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $amount = null;
 
-    #[Assert\Currency]
+    #[Assert\Range(max: 10)]
     #[Assert\Expression(expression: 'value or this.isEmpty()', message: 'You must set a currency for the amount.')]
-    #[ORM\Column(length: 3, nullable: true)]
+    #[ORM\Column(length: 10, nullable: true)]
     private ?string $currency = null;
+
+    #[Assert\Expression(expression: 'value or this.isISOCurrency()', message: 'You must set a scale for non-ISO currencies.')]
+    #[ORM\Column(nullable: true)]
+    private ?int $scale = null;
 
     public static function __callStatic(string $method, array $arguments = []): self
     {
@@ -291,35 +295,39 @@ class Price
             throw new \InvalidArgumentException(sprintf('The first argument #0 must be an integer (currency: "%s").', $method));
         }
 
-        return self::create($amount, $method);
+        return self::create($amount, Currency::of($method));
     }
 
-    public static function wrapMoney(Money $money): self
+    public static function embed(Money $money): self
     {
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int|float|string|null $amount = null, Currency|string|null $currency = null, bool $isMinor = true): self
+    public static function create(int|float|string $amount, Currency $currency, bool $isMinor = true): self
     {
-        $price = new self();
-        $price->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
+        $embeddedMoney = new self();
+        $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
+        $embeddedMoney->update($money);
 
-        if (null !== $price->currency) {
-            $money = null !== $amount ? ($isMinor ? Money::ofMinor($amount, $price->currency) : Money::of($amount, $price->currency)) : Money::zero($price->currency);
-            $price->update($money);
-        }
+        return $embeddedMoney;
+    }
 
-        return $price;
+    public static function zero(Currency $currency): self
+    {
+        $embeddedMoney = new self();
+        $embeddedMoney->update(Money::zero($currency));
+
+        return $embeddedMoney;
     }
 
     public function getAmount(): ?int
     {
-        return $this->amount;
+        return (int) $this->amount;
     }
 
-    public function setAmount(?int $amount): self
+    public function setAmount(int|string|null $amount = null): self
     {
-        $this->amount = $amount;
+        $this->amount = null !== $amount ? (string) $amount : null;
 
         return $this;
     }
@@ -336,24 +344,42 @@ class Price
         return $this;
     }
 
+    public function getScale(): ?int
+    {
+        return $this->scale;
+    }
+
+    public function setScale(?int $scale): self
+    {
+        $this->scale = $scale;
+
+        return $this;
+    }
+
     public function getMoney(int $roundingMode = null): Money
     {
         if ($this->isEmpty()) {
-            throw new \BadMethodCallException('The price is empty - You must set amount and currency to call this method.');
+            throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
         }
 
         /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
         $roundingMode = $roundingMode ?: RoundingMode::DOWN;
+        $currency = CurrencyUtils::parse((string) $this->currency, $this->scale);
 
-        return Money::ofMinor((int) $this->amount, Currency::of((string) $this->currency), roundingMode: $roundingMode);
+        return Money::ofMinor((int) $this->amount, $currency, roundingMode: $roundingMode);
     }
 
     public function update(Money $money): self
     {
-        $this->amount = $money->getMinorAmount()->toInt();
+        $this->amount = (string) $money->getMinorAmount()->toInt();
         $this->currency = $money->getCurrency()->getCurrencyCode();
 
         return $this;
+    }
+
+    public function isISOCurrency(): bool
+    {
+        return null !== $this->currency && CurrencyUtils::isISOCurrency($this->currency);
     }
 
     public function isEmpty(): bool
