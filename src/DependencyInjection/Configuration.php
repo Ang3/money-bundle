@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder
             ->getRootNode()
+            ->addDefaultsIfNotSet()
             ->fixXmlConfig('currency', 'currencies')
             ->children()
             ->scalarNode('default_currency')->cannotBeEmpty()->defaultValue(Ang3MoneyBundle::DEFAULT_CURRENCY)->end()
