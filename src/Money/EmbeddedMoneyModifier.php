@@ -169,7 +169,7 @@ class EmbeddedMoneyModifier
         return $this;
     }
 
-    private function getThat(EmbeddedMoney|AbstractMoney|BigNumber|int|float|string $that): BigNumber|int|float|string
+    private function getThat(EmbeddedMoney|AbstractMoney|BigNumber|int|float|string $that): AbstractMoney|BigNumber|int|float|string
     {
         return $that instanceof EmbeddedMoney ? $that->getMoney() : $that;
     }
