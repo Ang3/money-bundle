@@ -28,7 +28,7 @@ class EmbeddedMoneyModifier
      */
     private int $roundingMode;
 
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, ?int $roundingMode = null)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
     {
         $this->initialize();
         $this->setRoundingMode($roundingMode);
@@ -47,7 +47,7 @@ class EmbeddedMoneyModifier
         return $this->roundingMode;
     }
 
-    public function setRoundingMode(?int $roundingMode = null): self
+    public function setRoundingMode(int $roundingMode = null): self
     {
         if (null !== $roundingMode && $roundingMode < 0 || $roundingMode > 9) {
             throw new \InvalidArgumentException(sprintf('The rounding mode value "%s" is not valid (min: 0 - max: 9).', $this->roundingMode));
