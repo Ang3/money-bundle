@@ -16,5 +16,5 @@ services:
   Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry:
     factory: [null, create]
     arguments:
-      $config: '%ang3_money.config%'
+      $config: '@Ang3\Bundle\MoneyBundle\Config\MoneyConfig'
     public: true
