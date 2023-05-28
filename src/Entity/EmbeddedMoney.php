@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
+use Ang3\Bundle\MoneyBundle\Money\EmbeddedMoneyModifier;
 use Ang3\Bundle\MoneyBundle\Utils\CurrencyUtils;
 use Brick\Math\RoundingMode;
 use Brick\Money\Currency;
@@ -356,7 +357,12 @@ class EmbeddedMoney
         return $this;
     }
 
-    public function getMoney(int $roundingMode = null): Money
+    public function modify(?int $roundingMode = null): EmbeddedMoneyModifier
+    {
+        return new EmbeddedMoneyModifier($this, $roundingMode);
+    }
+
+    public function getMoney(?int $roundingMode = null): Money
     {
         if ($this->isEmpty()) {
             throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
