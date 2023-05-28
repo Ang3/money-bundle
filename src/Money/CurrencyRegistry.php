@@ -37,8 +37,8 @@ class CurrencyRegistry
             $registry->add(Currency::of($currencyCode));
         }
 
-        foreach ($config->getCustomCurrencies() as $parameters) {
-            $registry->add(new Currency((string) $parameters['code'], 0, (string) $parameters['name'], (int) $parameters['scale']));
+        foreach ($config->getCustomCurrencies() as $currencyCode => $parameters) {
+            $registry->add(new Currency((string) $currencyCode, 0, (string) $parameters['name'], (int) $parameters['scale']));
         }
 
         $registry->setDefaultCurrency($config->getDefaultCurrency());
