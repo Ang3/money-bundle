@@ -32,11 +32,6 @@ class Configuration implements ConfigurationInterface
             ->append($this->addIsoCurrenciesNode())
             ->append($this->addCustomCurrenciesNode())
             ->end()
-            ->validate()
-            ->ifTrue(function ($v): void {
-            })
-            ->thenInvalid()
-            ->end()
         ;
 
         return $treeBuilder;
