@@ -44,7 +44,6 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->arrayNode('custom_currencies')
             ->useAttributeAsKey('name')
-            ->addDefaultsIfNotSet()
             ->arrayPrototype()
             ->children()
             ->scalarNode('code')->isRequired()->cannotBeEmpty()->end()
