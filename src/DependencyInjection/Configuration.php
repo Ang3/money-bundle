@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\DependencyInjection;
 
 use Ang3\Bundle\MoneyBundle\Ang3MoneyBundle;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Intl\Currencies;
@@ -25,33 +26,11 @@ class Configuration implements ConfigurationInterface
         $treeBuilder
             ->getRootNode()
             ->addDefaultsIfNotSet()
-            ->fixXmlConfig('currency', 'currencies')
+            ->fixXmlConfig('custom_currency', 'custom_currencies')
             ->children()
             ->scalarNode('default_currency')->cannotBeEmpty()->defaultValue(Ang3MoneyBundle::DEFAULT_CURRENCY)->end()
-            ->arrayNode('iso_currencies')
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->booleanNode('enabled')->defaultValue(true)->end()
-            ->arrayNode('codes')
-            ->scalarPrototype()
-            ->validate()
-            ->ifNotInArray(Currencies::getCurrencyCodes())
-            ->thenInvalid('Invalid currency "%s".')
-            ->end()
-            ->end()
-            ->end()
-            ->end()
-            ->end()
-            ->arrayNode('custom_currencies')
-            ->useAttributeAsKey('name')
-            ->arrayPrototype()
-            ->children()
-            ->scalarNode('code')->isRequired()->cannotBeEmpty()->end()
-            ->integerNode('scale')->isRequired()->min(0)->end()
-            ->scalarNode('name')->info('Currency name - If NULL, the code is used as name.')->end()
-            ->end()
-            ->end()
-            ->end()
+            ->append($this->addIsoCurrenciesNode())
+            ->append($this->addCustomCurrenciesNode())
             ->end()
             ->validate()
             ->ifTrue(function ($v) {
@@ -71,5 +50,40 @@ class Configuration implements ConfigurationInterface
         ;
 
         return $treeBuilder;
+    }
+
+    public function addIsoCurrenciesNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('iso_currencies');
+
+        return $treeBuilder
+            ->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children()
+            ->booleanNode('enabled')->defaultValue(true)->end()
+            ->arrayNode('codes')
+            ->scalarPrototype()
+            ->validate()->ifNotInArray(Currencies::getCurrencyCodes())->thenInvalid('Invalid currency "%s".')->end()
+            ->end()
+            ->end()
+            ->end()
+        ;
+    }
+
+    public function addCustomCurrenciesNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('custom_currencies');
+
+        return $treeBuilder
+            ->getRootNode()
+            ->useAttributeAsKey('name')
+            ->arrayPrototype()
+            ->children()
+            ->scalarNode('code')->isRequired()->cannotBeEmpty()->end()
+            ->integerNode('scale')->isRequired()->min(0)->end()
+            ->scalarNode('name')->info('Currency name - If NULL, the code is used as name.')->end()
+            ->end()
+            ->end()
+        ;
     }
 }
