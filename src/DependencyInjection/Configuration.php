@@ -76,7 +76,6 @@ class Configuration implements ConfigurationInterface
 
         return $treeBuilder
             ->getRootNode()
-            ->useAttributeAsKey('name')
             ->arrayPrototype()
             ->children()
             ->scalarNode('code')->isRequired()->cannotBeEmpty()->end()
