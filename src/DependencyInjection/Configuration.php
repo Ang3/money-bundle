@@ -48,7 +48,7 @@ class Configuration implements ConfigurationInterface
             ->arrayPrototype()
             ->children()
             ->scalarNode('code')->isRequired()->cannotBeEmpty()->end()
-            ->integerNode('scale')->isRequired()->cannotBeEmpty()->min(0)->end()
+            ->integerNode('scale')->isRequired()->min(0)->end()
             ->scalarNode('name')->info('Currency name - If NULL, the code is used as name.')->end()
             ->end()
             ->end()
