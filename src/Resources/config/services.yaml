@@ -20,4 +20,6 @@ services:
     public: true
 
   Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider:
+    calls:
+      - [ 'setRegistry', ['@Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry'] ]
     public: true
