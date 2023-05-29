@@ -28,12 +28,15 @@ class MoneyBuilder
     /**
      * @var 0|1|2|3|4|5|6|7|8|9
      */
-    protected int $roundingMode;
+    protected int $roundingMode = RoundingMode::DOWN;
 
     public function __construct(private readonly Money $money, int $roundingMode = null)
     {
         $this->initialize();
-        $this->setRoundingMode($roundingMode);
+
+        if ($roundingMode) {
+            $this->setRoundingMode($roundingMode);
+        }
     }
 
     public static function create(Money $money, int $roundingMode = null): self
@@ -55,13 +58,13 @@ class MoneyBuilder
         return $this->roundingMode;
     }
 
-    public function setRoundingMode(int $roundingMode = null): self
+    public function setRoundingMode(int $roundingMode): self
     {
-        if (null !== $roundingMode && $roundingMode < 0 || $roundingMode > 9) {
+        if ($roundingMode < 0 || $roundingMode > 9) {
             throw new \InvalidArgumentException(sprintf('The rounding mode value "%s" is not valid (min: 0 - max: 9).', $this->roundingMode));
         }
 
-        $this->roundingMode = null !== $roundingMode ? $roundingMode : RoundingMode::DOWN;
+        $this->roundingMode = $roundingMode;
 
         return $this;
     }
