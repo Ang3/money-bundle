@@ -16,7 +16,7 @@ use Ang3\Bundle\MoneyBundle\Enum\RoundingMode;
 
 class EmbeddedMoneyModifier extends RationalMoneyBuilder
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, ?RoundingMode $roundingMode = null)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, RoundingMode $roundingMode = null)
     {
         parent::__construct($this->embeddedMoney->getMoney($roundingMode), $roundingMode);
     }
