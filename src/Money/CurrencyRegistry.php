@@ -34,7 +34,7 @@ class CurrencyRegistry
         $ISOCurrencies = $config->getISOCurrencies() ?: Currencies::getCurrencyCodes();
 
         foreach ($ISOCurrencies as $currencyCode) {
-            $registry->add(Currency::of($currencyCode));
+            $registry->add(new Currency((string) $currencyCode, 0, Currencies::getName($currencyCode), Currencies::getFractionDigits($currencyCode)));
         }
 
         foreach ($config->getCustomCurrencies() as $currencyCode => $parameters) {

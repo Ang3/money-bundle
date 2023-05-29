@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
 use Ang3\Bundle\MoneyBundle\Money\EmbeddedMoneyModifier;
+use Ang3\Bundle\MoneyBundle\Money\MoneyAwareInterface;
 use Ang3\Bundle\MoneyBundle\Utils\CurrencyUtils;
 use Brick\Math\RoundingMode;
 use Brick\Money\Currency;
@@ -274,7 +275,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class EmbeddedMoney
+class EmbeddedMoney implements MoneyAwareInterface
 {
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $amount = null;
