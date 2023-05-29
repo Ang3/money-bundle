@@ -20,7 +20,7 @@ interface MoneyBuilderInterface extends MoneyOperationInterface
      * Initialize the builder from the given or stored rounding mode.
      * Use this method to reset the builder on initial state.
      */
-    public function initialize(?RoundingMode $roundingMode = null): self;
+    public function initialize(RoundingMode $roundingMode = null): self;
 
     /**
      * Build the instance of Money.
