@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Money;
 
-use Symfony\Contracts\Service\Attribute\Required;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class CurrencyRegistryProvider
 {
@@ -20,15 +20,16 @@ final class CurrencyRegistryProvider
     public static function getRegistry(): CurrencyRegistry
     {
         if (!self::$currencyRegistry) {
-            throw new \RuntimeException('No currency registry has been registered.');
+            throw new \RuntimeException('No currency registry has been registered to the container.');
         }
 
         return self::$currencyRegistry;
     }
 
-    #[Required]
-    public static function setRegistry(CurrencyRegistry $globalCurrencyRegistry): void
+    public static function setContainer(ContainerInterface $container): void
     {
-        self::$currencyRegistry = $globalCurrencyRegistry;
+        /** @var CurrencyRegistry $currencyRegistry */
+        $currencyRegistry = $container->get(CurrencyRegistry::class);
+        self::$currencyRegistry = $currencyRegistry;
     }
 }

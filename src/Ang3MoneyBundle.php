@@ -11,9 +11,18 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle;
 
+use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class Ang3MoneyBundle extends Bundle
 {
     public const DEFAULT_CURRENCY = 'EUR';
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        // We provide the container to the currency provider registry to store the registry statically.
+        CurrencyRegistryProvider::setContainer($this->container);
+    }
 }
