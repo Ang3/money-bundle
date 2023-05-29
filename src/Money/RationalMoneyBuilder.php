@@ -24,7 +24,7 @@ class RationalMoneyBuilder implements MoneyOperationInterface
     protected RoundingMode $roundingMode = RoundingMode::Down;
     protected Context $context;
 
-    public function __construct(private readonly Money $money, ?RoundingMode $roundingMode = null)
+    public function __construct(private readonly Money $money, RoundingMode $roundingMode = null)
     {
         $this->initialize();
 
@@ -33,7 +33,7 @@ class RationalMoneyBuilder implements MoneyOperationInterface
         }
     }
 
-    public static function create(Money $money, ?RoundingMode $roundingMode = null): self
+    public static function create(Money $money, RoundingMode $roundingMode = null): self
     {
         return new self($money, $roundingMode);
     }
@@ -56,35 +56,35 @@ class RationalMoneyBuilder implements MoneyOperationInterface
         return $this;
     }
 
-    public function plus(mixed $that, ?RoundingMode $roundingMode = null): static
+    public function plus(mixed $that, RoundingMode $roundingMode = null): static
     {
         $this->rationalMoney = $this->rationalMoney->plus($this->getThat($that));
 
         return $this;
     }
 
-    public function minus(mixed $that, ?RoundingMode $roundingMode = null): static
+    public function minus(mixed $that, RoundingMode $roundingMode = null): static
     {
         $this->rationalMoney = $this->rationalMoney->minus($this->getThat($that));
 
         return $this;
     }
 
-    public function multipliedBy(mixed $that, ?RoundingMode $roundingMode = null): static
+    public function multipliedBy(mixed $that, RoundingMode $roundingMode = null): static
     {
         $this->rationalMoney = $this->rationalMoney->multipliedBy($this->getValue($that));
 
         return $this;
     }
 
-    public function dividedBy(mixed $that, ?RoundingMode $roundingMode = null): static
+    public function dividedBy(mixed $that, RoundingMode $roundingMode = null): static
     {
         $this->rationalMoney = $this->rationalMoney->dividedBy($this->getValue($that));
 
         return $this;
     }
 
-    public function build(?RoundingMode $roundingMode = null): Money
+    public function build(RoundingMode $roundingMode = null): Money
     {
         return $this->rationalMoney->to($this->context, ($roundingMode ?: $this->roundingMode)->value);
     }

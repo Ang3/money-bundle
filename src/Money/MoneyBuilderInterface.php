@@ -19,5 +19,5 @@ interface MoneyBuilderInterface extends MoneyOperationInterface
     /**
      * Build the instance of Money.
      */
-    public function build(?RoundingMode $roundingMode = null): Money;
+    public function build(RoundingMode $roundingMode = null): Money;
 }

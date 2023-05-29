@@ -322,7 +322,7 @@ class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
         return $embeddedMoney;
     }
 
-    public function getMoney(?RoundingMode $roundingMode = null): Money
+    public function getMoney(RoundingMode $roundingMode = null): Money
     {
         if ($this->isEmpty()) {
             throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
