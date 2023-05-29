@@ -16,7 +16,7 @@ use Brick\Math\RoundingMode;
 
 class EmbeddedMoneyModifier extends MoneyBuilder
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, ?int $roundingMode = null)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
     {
         parent::__construct($this->embeddedMoney->getMoney($roundingMode ?: RoundingMode::DOWN));
     }
