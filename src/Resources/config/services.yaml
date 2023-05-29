@@ -2,6 +2,8 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    calls:
+      - [ ['Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney', 'setGlobalCurrencyRegistry'], ['@Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry'] ]
 
   # Autowiring
   Ang3\Bundle\MoneyBundle\:
