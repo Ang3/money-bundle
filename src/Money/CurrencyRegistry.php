@@ -43,7 +43,7 @@ class CurrencyRegistry
 
         $registry->setDefaultCurrency($config->getDefaultCurrency());
 
-		return $registry;
+        return $registry;
     }
 
     /**

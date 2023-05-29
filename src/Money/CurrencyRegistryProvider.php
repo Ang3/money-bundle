@@ -19,9 +19,9 @@ final class CurrencyRegistryProvider
 
     public static function getRegistry(): CurrencyRegistry
     {
-		if (!self::$currencyRegistry) {
-			throw new \RuntimeException('No currency registry has been registered.');
-		}
+        if (!self::$currencyRegistry) {
+            throw new \RuntimeException('No currency registry has been registered.');
+        }
 
         return self::$currencyRegistry;
     }
