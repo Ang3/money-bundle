@@ -23,9 +23,7 @@ class EmbeddedMoneyModifier extends RationalMoneyBuilder
 
     public function initialize(?RoundingMode $roundingMode = null): self
     {
-        $money = $this->embeddedMoney->getMoney($this->roundingMode);
-        $this->rationalMoney = $money->toRational();
-        $this->context = $money->getContext();
+        $this->setMoney($this->embeddedMoney->getMoney($this->roundingMode));
 
         return $this;
     }
