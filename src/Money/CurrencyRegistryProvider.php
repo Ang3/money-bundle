@@ -15,7 +15,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 final class CurrencyRegistryProvider
 {
-    private static ?CurrencyRegistry $currencyRegistry;
+    private static ?CurrencyRegistry $currencyRegistry = null;
 
     public static function getRegistry(): CurrencyRegistry
     {
