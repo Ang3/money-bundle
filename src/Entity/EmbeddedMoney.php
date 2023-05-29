@@ -302,9 +302,10 @@ class EmbeddedMoney implements MoneyAwareInterface
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int|float|string $amount, Currency $currency, bool $isMinor = true): self
+    public static function create(int|float|string $amount, ?Currency $currency = null, bool $isMinor = true): self
     {
         $embeddedMoney = new self();
+        $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
         $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
         $embeddedMoney->update($money);
 
