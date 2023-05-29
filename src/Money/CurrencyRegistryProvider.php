@@ -17,10 +17,6 @@ final class CurrencyRegistryProvider
 {
     private static CurrencyRegistry $currencyRegistry;
 
-    private function __construct()
-    {
-    }
-
     public static function getRegistry(): CurrencyRegistry
     {
         return self::$currencyRegistry;
