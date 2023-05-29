@@ -19,7 +19,7 @@ enum RoundingMode: int
      * If this rounding mode is specified on an operation that yields a result that
      * cannot be represented at the requested scale, a RoundingNecessaryException is thrown.
      */
-    case Unnecessary = \Brick\Math\RoundingMode::UNNECESSARY;
+    case Unnecessary = 0;
 
     /*
      * Rounds away from zero.
@@ -27,7 +27,7 @@ enum RoundingMode: int
      * Always increments the digit prior to a nonzero discarded fraction.
      * Note that this rounding mode never decreases the magnitude of the calculated value.
      */
-    case Up = \Brick\Math\RoundingMode::UP;
+    case Up = 1;
 
     /*
      * Rounds towards zero.
@@ -35,7 +35,7 @@ enum RoundingMode: int
      * Never increments the digit prior to a discarded fraction (i.e., truncates).
      * Note that this rounding mode never increases the magnitude of the calculated value.
      */
-    case Down = \Brick\Math\RoundingMode::DOWN;
+    case Down = 2;
 
     /*
      * Rounds towards positive infinity.
@@ -43,7 +43,7 @@ enum RoundingMode: int
      * If the result is positive, behaves as for UP; if negative, behaves as for DOWN.
      * Note that this rounding mode never decreases the calculated value.
      */
-    case Ceiling = \Brick\Math\RoundingMode::CEILING;
+    case Ceiling = 3;
 
     /*
      * Rounds towards negative infinity.
@@ -51,7 +51,7 @@ enum RoundingMode: int
      * If the result is positive, behave as for DOWN; if negative, behave as for UP.
      * Note that this rounding mode never increases the calculated value.
      */
-    case Floor = \Brick\Math\RoundingMode::FLOOR;
+    case Floor = 4;
 
     /*
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round up.
@@ -59,28 +59,28 @@ enum RoundingMode: int
      * Behaves as for UP if the discarded fraction is >= 0.5; otherwise, behaves as for DOWN.
      * Note that this is the rounding mode commonly taught at school.
      */
-    case HalfUp = \Brick\Math\RoundingMode::HALF_UP;
+    case HalfUp = 5;
 
     /*
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round down.
      *
      * Behaves as for UP if the discarded fraction is > 0.5; otherwise, behaves as for DOWN.
      */
-    case HalfDown = \Brick\Math\RoundingMode::HALF_DOWN;
+    case HalfDown = 6;
 
     /*
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round towards positive infinity.
      *
      * If the result is positive, behaves as for HALF_UP; if negative, behaves as for HALF_DOWN.
      */
-    case HalfCeiling = \Brick\Math\RoundingMode::HALF_CEILING;
+    case HalfCeiling = 7;
 
     /*
      * Rounds towards "nearest neighbor" unless both neighbors are equidistant, in which case round towards negative infinity.
      *
      * If the result is positive, behaves as for HALF_DOWN; if negative, behaves as for HALF_UP.
      */
-    case halfFloor = \Brick\Math\RoundingMode::HALF_FLOOR;
+    case halfFloor = 8;
 
     /*
      * Rounds towards the "nearest neighbor" unless both neighbors are equidistant, in which case rounds towards the even neighbor.
@@ -92,5 +92,5 @@ enum RoundingMode: int
      * cumulative error when applied repeatedly over a sequence of calculations.
      * It is sometimes known as "Banker's rounding", and is chiefly used in the USA.
      */
-    case halfEven = \Brick\Math\RoundingMode::HALF_EVEN;
+    case halfEven = 9;
 }
