@@ -17,9 +17,15 @@ services:
     factory: [null, create]
     arguments:
       $config: '@Ang3\Bundle\MoneyBundle\Config\MoneyConfig'
+
+  currency_registry:
+    alias: Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry
     public: true
 
   Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider:
     calls:
-      - [ 'setRegistry', ['@Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry'] ]
+      - [ 'setRegistry', ['@currency_registry'] ]
+
+  currency_provider:
+    alias: Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider
     public: true
