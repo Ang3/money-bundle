@@ -24,7 +24,7 @@ class RationalMoneyBuilder implements MoneyOperationInterface
     protected RoundingMode $roundingMode = RoundingMode::Down;
     protected Context $context;
 
-    public function __construct(private Money $money, ?RoundingMode $roundingMode = null)
+    public function __construct(private Money $money, RoundingMode $roundingMode = null)
     {
         $this->initialize($roundingMode);
     }
@@ -34,7 +34,7 @@ class RationalMoneyBuilder implements MoneyOperationInterface
         return new self($money, $roundingMode);
     }
 
-    public function initialize(?RoundingMode $roundingMode = null): self
+    public function initialize(RoundingMode $roundingMode = null): self
     {
         $this->setMoney($this->money);
 
