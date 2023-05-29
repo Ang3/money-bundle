@@ -21,16 +21,18 @@ class EmbeddedMoneyModifier extends RationalMoneyBuilder
         parent::__construct($this->embeddedMoney->getMoney($roundingMode), $roundingMode);
     }
 
-    public function initialize(): void
+    public function initialize(?RoundingMode $roundingMode = null): self
     {
         $money = $this->embeddedMoney->getMoney($this->roundingMode);
         $this->rationalMoney = $money->toRational();
         $this->context = $money->getContext();
+
+        return $this;
     }
 
-    public function save(): EmbeddedMoney
+    public function save(?RoundingMode $roundingMode = null): EmbeddedMoney
     {
-        $this->embeddedMoney->updateMoney($this->build());
+        $this->embeddedMoney->updateMoney($this->build($roundingMode));
 
         return $this->embeddedMoney;
     }
