@@ -27,7 +27,7 @@ class CurrencyRegistry
     /**
      * @throws CurrencyNotFound when the default currency was not found
      */
-    public static function create(MoneyConfig $config): void
+    public static function create(MoneyConfig $config): self
     {
         $registry = new self();
         $registry->currencies = [];
@@ -42,6 +42,8 @@ class CurrencyRegistry
         }
 
         $registry->setDefaultCurrency($config->getDefaultCurrency());
+
+		return $registry;
     }
 
     /**

@@ -11,6 +11,9 @@ services:
   Ang3\Bundle\MoneyBundle\Config\MoneyConfig:
     arguments:
       $parameters: '%ang3_money.config%'
+
+  money_config:
+    alias: Ang3\Bundle\MoneyBundle\Config\MoneyConfig
     public: true
 
   Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry:
