@@ -278,13 +278,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Embeddable]
 class EmbeddedMoney implements MoneyAwareInterface
 {
-	/**
-	 * @internal
-	 *
-	 * This registry is provided on kernel construction.
-	 */
-	private static ?CurrencyRegistry $globalCurrencyRegistry = null;
-	private CurrencyRegistry $currencyRegistry;
+    /**
+     * @internal
+     *
+     * This registry is provided on kernel construction
+     */
+    private static ?CurrencyRegistry $globalCurrencyRegistry = null;
+    private CurrencyRegistry $currencyRegistry;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $amount = null;
@@ -298,10 +298,10 @@ class EmbeddedMoney implements MoneyAwareInterface
     #[ORM\Column(nullable: true)]
     private ?int $scale = null;
 
-	public function __construct()
-	{
-		$this->currencyRegistry = self::$globalCurrencyRegistry ?: new CurrencyRegistry();
-	}
+    public function __construct()
+    {
+        $this->currencyRegistry = self::$globalCurrencyRegistry ?: new CurrencyRegistry();
+    }
 
     public static function __callStatic(string $method, array $arguments = []): self
     {
@@ -314,13 +314,13 @@ class EmbeddedMoney implements MoneyAwareInterface
         return self::create($amount, Currency::of($method));
     }
 
-	/**
-	 * @internal
-	 */
-	public static function setGlobalCurrencyRegistry(CurrencyRegistry $globalCurrencyRegistry): void
-	{
-		self::$globalCurrencyRegistry = $globalCurrencyRegistry;
-	}
+    /**
+     * @internal
+     */
+    public static function setGlobalCurrencyRegistry(CurrencyRegistry $globalCurrencyRegistry): void
+    {
+        self::$globalCurrencyRegistry = $globalCurrencyRegistry;
+    }
 
     public static function embed(Money $money): self
     {
@@ -406,27 +406,27 @@ class EmbeddedMoney implements MoneyAwareInterface
         return $this;
     }
 
-	public function getCurrencyRegistry(): CurrencyRegistry
-	{
-		return $this->currencyRegistry;
-	}
+    public function getCurrencyRegistry(): CurrencyRegistry
+    {
+        return $this->currencyRegistry;
+    }
 
-	public function setCurrencyRegistry(CurrencyRegistry $currencyRegistry): self
-	{
-		$this->currencyRegistry = $currencyRegistry;
+    public function setCurrencyRegistry(CurrencyRegistry $currencyRegistry): self
+    {
+        $this->currencyRegistry = $currencyRegistry;
 
-		return $this;
-	}
+        return $this;
+    }
 
     public function isISOCurrency(): bool
     {
         return null !== $this->currency && CurrencyUtils::isISOCurrency($this->currency);
     }
 
-	public function toZero(): self
-	{
-		return self::embed(Money::zero((string) $this->getCurrency()));
-	}
+    public function toZero(): self
+    {
+        return self::embed(Money::zero((string) $this->getCurrency()));
+    }
 
     public function isEmpty(): bool
     {
