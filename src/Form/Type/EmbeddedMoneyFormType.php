@@ -28,7 +28,7 @@ class EmbeddedMoneyFormType extends AbstractType
     {
         /** @var EmbeddedMoney $embeddedMoney */
         $embeddedMoney = $options['data'];
-        $currency = $embeddedMoney->getCurrency();
+        $currency = $embeddedMoney->getCurrency()?->getCurrencyCode();
         $isCurrencyFieldEnabled = null === $currency && false !== $options['currency_field'];
 
         if ($currency) {

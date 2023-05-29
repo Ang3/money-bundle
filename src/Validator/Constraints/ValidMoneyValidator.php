@@ -62,7 +62,7 @@ class ValidMoneyValidator extends ConstraintValidator
             }
         }
 
-        $currency = $value instanceof EmbeddedMoney ? $value->getCurrency() : $value->getCurrency()->getCurrencyCode();
+        $currency = $value->getCurrency()?->getCurrencyCode();
 
         if ($currency) {
             if ($constraint->isoCurrency && !Currencies::exists($currency)) {

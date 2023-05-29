@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
-use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry;
+use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Money\EmbeddedMoneyModifier;
 use Ang3\Bundle\MoneyBundle\Money\MoneyAwareInterface;
 use Ang3\Bundle\MoneyBundle\Utils\CurrencyUtils;
@@ -278,14 +278,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Embeddable]
 class EmbeddedMoney implements MoneyAwareInterface
 {
-	/**
-	 * @internal
-	 *
-	 * This registry is provided on kernel construction.
-	 */
-	private static ?CurrencyRegistry $globalCurrencyRegistry = null;
-	private CurrencyRegistry $currencyRegistry;
-
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $amount = null;
 
@@ -293,15 +285,6 @@ class EmbeddedMoney implements MoneyAwareInterface
     #[Assert\Expression(expression: 'value or this.isEmpty()', message: 'You must set a currency for the amount.')]
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $currency = null;
-
-    #[Assert\Expression(expression: 'value or this.isISOCurrency()', message: 'You must set a scale for non-ISO currencies.')]
-    #[ORM\Column(nullable: true)]
-    private ?int $scale = null;
-
-	public function __construct()
-	{
-		$this->currencyRegistry = self::$globalCurrencyRegistry ?: new CurrencyRegistry();
-	}
 
     public static function __callStatic(string $method, array $arguments = []): self
     {
@@ -313,14 +296,6 @@ class EmbeddedMoney implements MoneyAwareInterface
 
         return self::create($amount, Currency::of($method));
     }
-
-	/**
-	 * @internal
-	 */
-	public static function setGlobalCurrencyRegistry(CurrencyRegistry $globalCurrencyRegistry): void
-	{
-		self::$globalCurrencyRegistry = $globalCurrencyRegistry;
-	}
 
     public static function embed(Money $money): self
     {
@@ -344,6 +319,34 @@ class EmbeddedMoney implements MoneyAwareInterface
         return $embeddedMoney;
     }
 
+    public function modify(int $roundingMode = null): EmbeddedMoneyModifier
+    {
+        return new EmbeddedMoneyModifier($this, $roundingMode);
+    }
+
+    public function getMoney(int $roundingMode = null): Money
+    {
+        if ($this->isEmpty()) {
+            throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
+        }
+
+        /** @var Currency $currency */
+        $currency = $this->getCurrency();
+
+        /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
+        $roundingMode = $roundingMode ?: RoundingMode::DOWN;
+
+        return Money::ofMinor((int) $this->amount, $currency, roundingMode: $roundingMode);
+    }
+
+    public function update(Money $money): self
+    {
+        $this->amount = (string) $money->getMinorAmount()->toInt();
+        $this->setCurrency($money->getCurrency());
+
+        return $this;
+    }
+
     public function getAmount(): ?int
     {
         return (int) $this->amount;
@@ -356,77 +359,27 @@ class EmbeddedMoney implements MoneyAwareInterface
         return $this;
     }
 
-    public function getCurrency(): ?string
+    public function getCurrency(): ?Currency
     {
-        return $this->currency;
+        return $this->currency ? CurrencyRegistryProvider::getRegistry()->get($this->currency) : null;
     }
 
-    public function setCurrency(?string $currency): self
+    public function setCurrency(Currency|string|null $currency): self
     {
-        $this->currency = $currency;
+        $this->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
 
         return $this;
     }
-
-    public function getScale(): ?int
-    {
-        return $this->scale;
-    }
-
-    public function setScale(?int $scale): self
-    {
-        $this->scale = $scale;
-
-        return $this;
-    }
-
-    public function modify(int $roundingMode = null): EmbeddedMoneyModifier
-    {
-        return new EmbeddedMoneyModifier($this, $roundingMode);
-    }
-
-    public function getMoney(int $roundingMode = null): Money
-    {
-        if ($this->isEmpty()) {
-            throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
-        }
-
-        /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
-        $roundingMode = $roundingMode ?: RoundingMode::DOWN;
-        $currency = CurrencyUtils::parse((string) $this->currency, $this->scale);
-
-        return Money::ofMinor((int) $this->amount, $currency, roundingMode: $roundingMode);
-    }
-
-    public function update(Money $money): self
-    {
-        $this->amount = (string) $money->getMinorAmount()->toInt();
-        $this->currency = $money->getCurrency()->getCurrencyCode();
-
-        return $this;
-    }
-
-	public function getCurrencyRegistry(): CurrencyRegistry
-	{
-		return $this->currencyRegistry;
-	}
-
-	public function setCurrencyRegistry(CurrencyRegistry $currencyRegistry): self
-	{
-		$this->currencyRegistry = $currencyRegistry;
-
-		return $this;
-	}
 
     public function isISOCurrency(): bool
     {
         return null !== $this->currency && CurrencyUtils::isISOCurrency($this->currency);
     }
 
-	public function toZero(): self
-	{
-		return self::embed(Money::zero((string) $this->getCurrency()));
-	}
+    public function toZero(): self
+    {
+        return self::embed(Money::zero((string) $this->getCurrency()));
+    }
 
     public function isEmpty(): bool
     {
