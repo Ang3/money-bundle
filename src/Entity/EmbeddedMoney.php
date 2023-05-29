@@ -14,11 +14,11 @@ namespace Ang3\Bundle\MoneyBundle\Entity;
 use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Money\EmbeddedMoneyModifier;
 use Ang3\Bundle\MoneyBundle\Money\MoneyAwareInterface;
-use Ang3\Bundle\MoneyBundle\Utils\CurrencyUtils;
 use Brick\Math\RoundingMode;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -373,7 +373,7 @@ class EmbeddedMoney implements MoneyAwareInterface
 
     public function isISOCurrency(): bool
     {
-        return null !== $this->currency && CurrencyUtils::isISOCurrency($this->currency);
+        return null !== $this->currency && Currencies::exists((string) $this->currency);
     }
 
     public function toZero(): self
