@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
+use Ang3\Bundle\MoneyBundle\Enum\RoundingMode;
 use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
-use Ang3\Bundle\MoneyBundle\Money\EmbeddedMoneyModifier;
 use Ang3\Bundle\MoneyBundle\Money\MoneyAwareInterface;
-use Brick\Math\RoundingMode;
+use Ang3\Bundle\MoneyBundle\Money\MoneyOperationInterface;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
@@ -276,8 +276,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class EmbeddedMoney implements MoneyAwareInterface
+class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
 {
+    use EmbeddedMoneyOperationTrait;
+
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $amount = null;
 
@@ -307,7 +309,7 @@ class EmbeddedMoney implements MoneyAwareInterface
         $embeddedMoney = new self();
         $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
         $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
-        $embeddedMoney->update($money);
+        $embeddedMoney->updateMoney($money);
 
         return $embeddedMoney;
     }
@@ -315,17 +317,12 @@ class EmbeddedMoney implements MoneyAwareInterface
     public static function zero(Currency $currency): self
     {
         $embeddedMoney = new self();
-        $embeddedMoney->update(Money::zero($currency));
+        $embeddedMoney->updateMoney(Money::zero($currency));
 
         return $embeddedMoney;
     }
 
-    public function modify(int $roundingMode = null): EmbeddedMoneyModifier
-    {
-        return new EmbeddedMoneyModifier($this, $roundingMode);
-    }
-
-    public function getMoney(int $roundingMode = null): Money
+    public function getMoney(?RoundingMode $roundingMode = null): Money
     {
         if ($this->isEmpty()) {
             throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
@@ -334,13 +331,10 @@ class EmbeddedMoney implements MoneyAwareInterface
         /** @var Currency $currency */
         $currency = $this->getCurrency();
 
-        /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
-        $roundingMode = $roundingMode ?: RoundingMode::DOWN;
-
-        return Money::ofMinor((int) $this->amount, $currency, roundingMode: $roundingMode);
+        return Money::ofMinor((int) $this->amount, $currency, roundingMode: ($roundingMode ?: RoundingMode::Down)->value);
     }
 
-    public function update(Money $money): self
+    public function updateMoney(Money $money): self
     {
         $this->amount = (string) $money->getMinorAmount()->toInt();
         $this->setCurrency($money->getCurrency());

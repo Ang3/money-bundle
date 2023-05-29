@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Money;
 
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
-use Brick\Math\RoundingMode;
+use Ang3\Bundle\MoneyBundle\Enum\RoundingMode;
 
-class EmbeddedMoneyModifier extends MoneyBuilder
+class EmbeddedMoneyModifier extends RationalMoneyBuilder
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, ?RoundingMode $roundingMode = null)
     {
-        parent::__construct($this->embeddedMoney->getMoney($roundingMode ?: RoundingMode::DOWN));
+        parent::__construct($this->embeddedMoney->getMoney($roundingMode), $roundingMode);
     }
 
     public function initialize(): void
@@ -30,7 +30,7 @@ class EmbeddedMoneyModifier extends MoneyBuilder
 
     public function save(): EmbeddedMoney
     {
-        $this->embeddedMoney->update($this->getResult());
+        $this->embeddedMoney->updateMoney($this->build());
 
         return $this->embeddedMoney;
     }
