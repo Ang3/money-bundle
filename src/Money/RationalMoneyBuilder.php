@@ -99,6 +99,13 @@ class RationalMoneyBuilder implements MoneyBuilderInterface
         return $this;
     }
 
+    public function abs(): static
+    {
+        $this->setMoney($this->getResult()->abs());
+
+        return $this;
+    }
+
     public function getResult(RoundingMode $roundingMode = null): Money
     {
         return $this->rationalMoney->to($this->context, ($roundingMode ?: $this->roundingMode)->value);
