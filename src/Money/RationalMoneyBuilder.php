@@ -18,7 +18,7 @@ use Brick\Money\Context;
 use Brick\Money\Money;
 use Brick\Money\RationalMoney;
 
-class RationalMoneyBuilder implements MoneyOperationInterface
+class RationalMoneyBuilder implements MoneyBuilderInterface
 {
     protected RationalMoney $rationalMoney;
     protected RoundingMode $roundingMode = RoundingMode::Down;
@@ -99,7 +99,7 @@ class RationalMoneyBuilder implements MoneyOperationInterface
         return $this;
     }
 
-    public function build(RoundingMode $roundingMode = null): Money
+    public function getResult(RoundingMode $roundingMode = null): Money
     {
         return $this->rationalMoney->to($this->context, ($roundingMode ?: $this->roundingMode)->value);
     }

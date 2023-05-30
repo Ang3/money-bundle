@@ -13,8 +13,9 @@ namespace Ang3\Bundle\MoneyBundle\Money;
 
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Ang3\Bundle\MoneyBundle\Enum\RoundingMode;
+use Brick\Money\Money;
 
-class EmbeddedMoneyModifier extends RationalMoneyBuilder
+class EmbeddedMoneyModifier extends RationalMoneyBuilder implements MoneyAwareInterface
 {
     public function __construct(private readonly EmbeddedMoney $embeddedMoney, RoundingMode $roundingMode = null)
     {
@@ -30,8 +31,13 @@ class EmbeddedMoneyModifier extends RationalMoneyBuilder
 
     public function save(RoundingMode $roundingMode = null): EmbeddedMoney
     {
-        $this->embeddedMoney->updateMoney($this->build($roundingMode));
+        $this->embeddedMoney->updateMoney($this->getResult($roundingMode));
 
         return $this->embeddedMoney;
+    }
+
+    public function getMoney(): Money
+    {
+        return parent::getResult();
     }
 }
