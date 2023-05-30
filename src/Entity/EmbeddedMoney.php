@@ -379,7 +379,7 @@ class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
 
     public function toZero(): self
     {
-        return self::embed(Money::zero((string) $this->getCurrency()));
+        return $this->updateMoney(Money::zero($this->getCurrency()));
     }
 
     public function isEmpty(): bool
