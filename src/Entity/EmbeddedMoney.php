@@ -15,6 +15,7 @@ use Ang3\Bundle\MoneyBundle\Enum\RoundingMode;
 use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Money\MoneyAwareInterface;
 use Ang3\Bundle\MoneyBundle\Money\MoneyOperationInterface;
+use Brick\Math\BigNumber;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
@@ -304,7 +305,7 @@ class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(int|float|string $amount, Currency $currency = null, bool $isMinor = true): self
+    public static function create(BigNumber|int|float|string $amount, ?Currency $currency = null, ?bool $isMinor = true): self
     {
         $embeddedMoney = new self();
         $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
@@ -340,6 +341,11 @@ class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
         $this->setCurrency($money->getCurrency());
 
         return $this;
+    }
+
+    public function duplicate(BigNumber|int|float|string|null $amount = null): self
+    {
+        return self::create($amount ?: (int) $this->amount, $this->getCurrency());
     }
 
     public function getAmount(): ?int
