@@ -18,7 +18,7 @@ use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, ?int $roundingMode = null)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
     {
         $money = $this->embeddedMoney->getMoney();
         parent::__construct($money->toRational(), $money->getContext(), $roundingMode);
@@ -34,7 +34,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
         return $this;
     }
 
-    public function save(?int $roundingMode = null): EmbeddedMoney
+    public function save(int $roundingMode = null): EmbeddedMoney
     {
         $result = $this->getResult($roundingMode);
         $this->embeddedMoney->setMoney($result);
@@ -42,7 +42,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
         return $this->embeddedMoney;
     }
 
-    public function getResult(?int $roundingMode = null): Money
+    public function getResult(int $roundingMode = null): Money
     {
         $result = $this->getDecorated();
 

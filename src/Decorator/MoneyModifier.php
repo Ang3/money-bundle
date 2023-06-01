@@ -17,7 +17,7 @@ use Brick\Money\Money;
 
 class MoneyModifier extends MoneyDecorator implements MoneyModifierInterface
 {
-    public function __construct(Monetizable $decorated, private ?Context $context = null, ?int $roundingMode = null)
+    public function __construct(Monetizable $decorated, private ?Context $context = null, int $roundingMode = null)
     {
         parent::__construct($decorated, $roundingMode);
         $this->context = $this->context ?: ($decorated instanceof Money ? $decorated->getContext() : null);
@@ -40,7 +40,7 @@ class MoneyModifier extends MoneyDecorator implements MoneyModifierInterface
         return $this->getResult();
     }
 
-    public function getResult(?int $roundingMode = null): Monetizable
+    public function getResult(int $roundingMode = null): Monetizable
     {
         return $this->getDecorated();
     }
