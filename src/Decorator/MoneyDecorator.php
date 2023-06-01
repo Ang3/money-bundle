@@ -34,8 +34,9 @@ class MoneyDecorator implements MoneyDecoratorInterface
     ];
 
     private Monetizable $decorated;
+	private ?int $roundingMode = null;
 
-    public function __construct(Monetizable $decorated, private ?int $roundingMode = null)
+    public function __construct(Monetizable $decorated)
     {
         $this->setDecorated($decorated);
     }

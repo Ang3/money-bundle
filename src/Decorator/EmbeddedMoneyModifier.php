@@ -20,7 +20,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
 {
     public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
     {
-        $money = $this->embeddedMoney->getMoney();
+        $money = $this->embeddedMoney->getMoney($roundingMode);
         parent::__construct($money->toRational(), $money->getContext(), $roundingMode);
     }
 
