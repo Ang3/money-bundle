@@ -19,13 +19,10 @@ use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(
-        private readonly EmbeddedMoney $embeddedMoney,
-        Monetizable $money = null,
-        protected ?int $roundingMode = null
-    ) {
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, Monetizable $money = null)
+    {
         $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
-        parent::__construct($money, null, $roundingMode);
+        parent::__construct($money);
     }
 
     public function initialize(int $roundingMode = null): self

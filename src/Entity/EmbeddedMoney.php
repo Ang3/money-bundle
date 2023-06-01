@@ -342,7 +342,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     public function setMoney(Money $money): self
     {
         $this->amount = $money->getMinorAmount();
-        $this->setCurrency($money->getCurrency());
+        $this->currency = $money->getCurrency();
 
         return $this;
     }
@@ -360,7 +360,6 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     public function setCurrency(Currency $currency): self
     {
         $this->currency = $currency;
-        $this->setDecorated($this->getMoney());
 
         return $this;
     }
