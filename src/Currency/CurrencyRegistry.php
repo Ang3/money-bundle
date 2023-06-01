@@ -58,6 +58,10 @@ class CurrencyRegistry
             throw new InvalidConfigurationException('The default currency configured under "ang3_money.default_currency" is neither defined as ISO or custom currency.');
         }
 
+	    foreach ($currencies as $currency) {
+		    $registry->add($currency);
+	    }
+
         $registry->setDefaultCurrency($defaultCurrency);
 
         return $registry;
