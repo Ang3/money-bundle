@@ -293,6 +293,11 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
         parent::__construct($this, $money, $roundingMode);
     }
 
+	public function __toString(): string
+	{
+		return (string) $this->getDecorated();
+	}
+
     public static function __callStatic(string $method, array $arguments = []): self
     {
         $amount = $arguments[0] ?? 0;
