@@ -293,10 +293,10 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
         parent::__construct($this, $money, $roundingMode);
     }
 
-	public function __toString(): string
-	{
-		return (string) $this->getMoney();
-	}
+    public function __toString(): string
+    {
+        return (string) $this->getMoney();
+    }
 
     public static function __callStatic(string $method, array $arguments = []): self
     {
@@ -363,6 +363,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     public function setAmount(BigNumber|string|float|int $amount): self
     {
         parent::setAmount($amount);
+        parent::setDecorated($this->getMoney());
 
         return $this;
     }
@@ -375,6 +376,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     public function setCurrency(Currency $currency): self
     {
         $this->currency = $currency;
+        parent::setDecorated($this->getMoney());
 
         return $this;
     }
