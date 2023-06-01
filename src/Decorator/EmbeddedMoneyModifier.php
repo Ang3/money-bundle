@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Decorator;
 
-use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Brick\Money\Contracts\Monetizable;
 use Brick\Money\Money;
@@ -19,9 +18,8 @@ use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, Monetizable $money = null)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, Monetizable $money)
     {
-        $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
         parent::__construct($money);
     }
 
@@ -44,7 +42,6 @@ class EmbeddedMoneyModifier extends MoneyModifier
                 throw new \UnexpectedValueException(sprintf('Expected money of type "%s|%s", got "%s".', Money::class, RationalMoney::class, get_debug_type($decorated)));
             }
 
-            $this->setContext($decorated->getContext());
             $decorated = $decorated->toRational();
         }
 

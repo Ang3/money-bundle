@@ -11,39 +11,13 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Decorator;
 
-use Brick\Money\Context;
 use Brick\Money\Contracts\Monetizable;
-use Brick\Money\Money;
 
 class MoneyModifier extends MoneyDecorator implements MoneyModifierInterface
 {
-    public function __construct(
-        Monetizable $decorated,
-        protected ?Context $context = null,
-        protected ?int $roundingMode = null
-    )
+    public function __construct(Monetizable $decorated, protected ?int $roundingMode = null)
     {
         parent::__construct($decorated);
-    }
-
-    public function setDecorated(Monetizable $decorated): self
-    {
-        $this->context = $decorated instanceof Money ? $decorated->getContext() : null;
-        parent::setDecorated($decorated);
-
-        return $this;
-    }
-
-    public function getContext(): ?Context
-    {
-        return $this->context;
-    }
-
-    public function setContext(?Context $context): self
-    {
-        $this->context = $context;
-
-        return $this;
     }
 
     public function save(): Monetizable
@@ -63,7 +37,7 @@ class MoneyModifier extends MoneyDecorator implements MoneyModifierInterface
      */
     protected function newInstance(Monetizable $money): self
     {
-        // No new instance - We keep the same but we change the decorated object
+        // We keep the same instance but we change the decorated object
         $this->setDecorated($money);
 
         return $this;

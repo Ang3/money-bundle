@@ -287,6 +287,9 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
 
     public function __construct(Money $money = null)
     {
+        $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
+        $this->setMoney($money);
+
         parent::__construct($this, $money);
     }
 
@@ -350,6 +353,13 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     public function getAmount(): BigNumber
     {
         return $this->amount;
+    }
+
+    public function setAmount(BigNumber|string|float|int $amount): self
+    {
+        parent::setAmount($amount);
+
+        return $this;
     }
 
     public function getCurrency(): Currency
