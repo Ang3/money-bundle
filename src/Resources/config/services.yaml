@@ -13,7 +13,7 @@ services:
       $parameters: '%ang3_money.config%'
     public: true
 
-  Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry:
+  Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry:
     factory: [null, create]
     arguments:
       $config: '@Ang3\Bundle\MoneyBundle\Config\MoneyConfig'
