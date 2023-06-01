@@ -72,15 +72,4 @@ class EmbeddedMoneyModifier extends MoneyModifier
 
         return $result->to($this->embeddedMoney->getMoney()->getContext(), $roundingMode);
     }
-
-    /**
-     * @internal
-     *
-     * Method override to update the decorated object by creating a new instance of this modifier
-     * especially for the embedded money and rounding mode
-     */
-    protected function newInstance(Monetizable $money): self
-    {
-        return new self($this->embeddedMoney, $money);
-    }
 }
