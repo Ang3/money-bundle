@@ -9,7 +9,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Ang3\Bundle\MoneyBundle\Money;
+namespace Ang3\Bundle\MoneyBundle\Currency;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,6 +30,11 @@ final class CurrencyRegistryProvider
     {
         /** @var CurrencyRegistry $currencyRegistry */
         $currencyRegistry = $container->get(CurrencyRegistry::class);
+        self::setCurrencyRegistry($currencyRegistry);
+    }
+
+    public static function setCurrencyRegistry(CurrencyRegistry $currencyRegistry): void
+    {
         self::$currencyRegistry = $currencyRegistry;
     }
 }

@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Exchange;
 
-use Ang3\Bundle\MoneyBundle\Exception\CurrencyNotFound;
-use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
+use Ang3\Bundle\MoneyBundle\Exception\CurrencyException;
 use Brick\Math\BigNumber;
 use Brick\Math\Exception\RoundingNecessaryException;
 use Brick\Math\RoundingMode;
@@ -31,7 +31,7 @@ class Exchanger
     }
 
     /**
-     * @throws CurrencyNotFound            When a currency was not found
+     * @throws CurrencyException           On invalid currencies
      * @throws RoundingNecessaryException  When a rounding option is necessary
      * @throws CurrencyConversionException On conversion failure
      */

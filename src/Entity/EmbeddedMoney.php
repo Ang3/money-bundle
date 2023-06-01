@@ -11,15 +11,14 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
-use Ang3\Bundle\MoneyBundle\Enum\RoundingMode;
-use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
-use Ang3\Bundle\MoneyBundle\Money\MoneyAwareInterface;
-use Ang3\Bundle\MoneyBundle\Money\MoneyOperationInterface;
+use Ang3\Bundle\MoneyBundle\Contracts\MoneyAwareInterface;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
+use Ang3\Bundle\MoneyBundle\Decorator\EmbeddedMoneyModifier;
 use Brick\Math\BigNumber;
+use Brick\Money\Contracts\Monetizable;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -277,17 +276,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
+class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
 {
-    use EmbeddedMoneyOperationTrait;
-
-    #[ORM\Column(length: 50, nullable: true)]
-    private ?string $amount = null;
+    #[ORM\Column()]
+    private BigNumber $amount;
 
     #[Assert\Range(max: 10)]
     #[Assert\Expression(expression: 'value or this.isEmpty()', message: 'You must set a currency for the amount.')]
-    #[ORM\Column(length: 10, nullable: true)]
-    private ?string $currency = null;
+    #[ORM\Column(length: 10)]
+    private Currency $currency;
+
+    public function __construct(?Money $money = null)
+    {
+        $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
+        $this->amount = $money->getMinorAmount();
+        $this->currency = $money->getCurrency();
+        parent::__construct($this);
+    }
 
     public static function __callStatic(string $method, array $arguments = []): self
     {
@@ -297,7 +302,15 @@ class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
             throw new \InvalidArgumentException(sprintf('The first argument #0 must be an integer (currency: "%s").', $method));
         }
 
-        return self::create($amount, Currency::of($method));
+        return self::create($amount, CurrencyRegistryProvider::getRegistry()->get($method));
+    }
+
+    public static function create(BigNumber|int|float|string $amount, Currency $currency = null, ?bool $isMinor = true): self
+    {
+        $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
+        $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
+
+        return new self($money);
     }
 
     public static function embed(Money $money): self
@@ -305,85 +318,54 @@ class EmbeddedMoney implements MoneyAwareInterface, MoneyOperationInterface
         return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
     }
 
-    public static function create(BigNumber|int|float|string $amount, Currency $currency = null, ?bool $isMinor = true): self
-    {
-        $embeddedMoney = new self();
-        $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
-        $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
-        $embeddedMoney->updateMoney($money);
-
-        return $embeddedMoney;
-    }
-
     public static function zero(Currency $currency): self
     {
         $embeddedMoney = new self();
-        $embeddedMoney->updateMoney(Money::zero($currency));
+        $embeddedMoney->setMoney(Money::zero($currency));
 
         return $embeddedMoney;
     }
 
-    public function getMoney(RoundingMode $roundingMode = null): Money
+    public function getMoney(int $roundingMode = null): Money
     {
-        if ($this->isEmpty()) {
-            throw new \BadMethodCallException('No amount registered - You must set amount and currency before calling this method.');
-        }
-
-        /** @var Currency $currency */
-        $currency = $this->getCurrency();
-
-        return Money::ofMinor((int) $this->amount, $currency, roundingMode: ($roundingMode ?: RoundingMode::Down)->value);
+        return Money::ofMinor(
+            $this->amount,
+            CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode()),
+            roundingMode: $this->resolveRoundingMode($roundingMode)
+        );
     }
 
-    public function updateMoney(Money $money): self
+    public function setDecorated(Monetizable $decorated): self
     {
-        $this->amount = (string) $money->getMinorAmount()->toInt();
+        parent::setDecorated($decorated);
+        $this->setMoney($this->getResult());
+
+        return $this;
+    }
+
+    public function setMoney(Money $money): self
+    {
+        $this->amount = $money->getMinorAmount();
         $this->setCurrency($money->getCurrency());
 
         return $this;
     }
 
-    public function duplicate(BigNumber|int|float|string|null $amount = null): self
+    public function getAmount(): BigNumber
     {
-        return self::create($amount ?: (int) $this->amount, $this->getCurrency());
+        return $this->amount;
     }
 
-    public function getAmount(): ?int
+    public function getCurrency(): Currency
     {
-        return (int) $this->amount;
+        return CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode());
     }
 
-    public function setAmount(int|string|null $amount = null): self
+    public function setCurrency(Currency $currency): self
     {
-        $this->amount = null !== $amount ? (string) $amount : null;
+        $this->currency = $currency;
+        $this->setDecorated($this->getMoney());
 
         return $this;
-    }
-
-    public function getCurrency(): ?Currency
-    {
-        return $this->currency ? CurrencyRegistryProvider::getRegistry()->get($this->currency) : null;
-    }
-
-    public function setCurrency(Currency|string|null $currency): self
-    {
-        $this->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
-
-        return $this;
-    }
-
-    public function isISOCurrency(): bool
-    {
-        return null !== $this->currency && Currencies::exists((string) $this->currency);
-    }
-
-    public function toZero(): self
-    {
-        return $this->updateMoney(Money::zero($this->getCurrency()));
-    }
-
-    public function isEmpty(): bool
-    {
-        return null === $this->amount || null === $this->currency;
     }
 }

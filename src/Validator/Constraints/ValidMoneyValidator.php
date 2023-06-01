@@ -13,10 +13,9 @@ namespace Ang3\Bundle\MoneyBundle\Validator\Constraints;
 
 use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
-use Brick\Money\Money;
+use Brick\Money\AbstractMoney;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -37,71 +36,47 @@ class ValidMoneyValidator extends ConstraintValidator
             return;
         }
 
-        if (!($value instanceof EmbeddedMoney || $value instanceof Money)) {
-            throw new UnexpectedTypeException($value, sprintf('%s|%s', EmbeddedMoney::class, Money::class));
+        if (!($value instanceof EmbeddedMoney || $value instanceof AbstractMoney)) {
+            throw new UnexpectedTypeException($value, sprintf('%s|%s', EmbeddedMoney::class, AbstractMoney::class));
         }
 
-        $notBlankConstraint = new NotBlank();
-        $amount = $value instanceof EmbeddedMoney ? $value->getAmount() : $value->getMinorAmount()->toInt();
+        $amount = $value->getAmount()->toInt();
+        $amountViolations = $this->context->getValidator()->validate($amount, $constraint->amountConstraints);
 
-        if (null !== $amount) {
-            $amountViolations = $this->context->getValidator()->validate($amount, $constraint->amountConstraints);
-
-            foreach ($amountViolations as $violation) {
-                $this->buildViolationAtPath($violation, 'amount');
-            }
-        } else {
-            if ($constraint->required) {
-                $this->context
-                    ->buildViolation($notBlankConstraint->message)
-                    ->atPath('amount')
-                    ->addViolation()
-                ;
-
-                return;
-            }
+        foreach ($amountViolations as $violation) {
+            $this->buildViolationAtPath($violation, 'amount');
         }
 
-        $currency = $value->getCurrency()?->getCurrencyCode();
+        $currency = $value->getCurrency()->getCurrencyCode();
 
-        if ($currency) {
-            if ($constraint->isoCurrency && !Currencies::exists($currency)) {
-                $this->context
-                    ->buildViolation($constraint->invalidISOCurrencyMessage)
-                    ->atPath('currency')
-                    ->addViolation()
-                ;
+        if ($constraint->isoCurrency && !Currencies::exists($currency)) {
+            $this->context
+                ->buildViolation($constraint->invalidISOCurrencyMessage)
+                ->atPath('currency')
+                ->addViolation()
+            ;
 
-                return;
-            }
+            return;
+        }
 
-            $allowedCurrencies = $this->moneyConfig->getISOCurrencies();
+        $allowedCurrencies = $this->moneyConfig->getISOCurrencies();
 
-            if ($allowedCurrencies && !\in_array($currency, $allowedCurrencies, true)) {
-                $this->context
-                    ->buildViolation($constraint->invalidCurrencyMessage)
-                    ->atPath('currency')
-                    ->setParameter('{{ value }}', $currency)
-                    ->setParameter('{{ values }}', sprintf('"%s"', implode('", "', $allowedCurrencies)))
-                    ->addViolation()
-                ;
+        if ($allowedCurrencies && !\in_array($currency, $allowedCurrencies, true)) {
+            $this->context
+                ->buildViolation($constraint->invalidCurrencyMessage)
+                ->atPath('currency')
+                ->setParameter('{{ value }}', $currency)
+                ->setParameter('{{ values }}', sprintf('"%s"', implode('", "', $allowedCurrencies)))
+                ->addViolation()
+            ;
 
-                return;
-            }
+            return;
+        }
 
-            $currencyViolations = $this->context->getValidator()->validate($currency, $constraint->currencyConstraints);
+        $currencyViolations = $this->context->getValidator()->validate($currency, $constraint->currencyConstraints);
 
-            foreach ($currencyViolations as $violation) {
-                $this->buildViolationAtPath($violation, 'currency');
-            }
-        } else {
-            if ($constraint->required) {
-                $this->context
-                    ->buildViolation($notBlankConstraint->message)
-                    ->atPath('currency')
-                    ->addViolation()
-                ;
-            }
+        foreach ($currencyViolations as $violation) {
+            $this->buildViolationAtPath($violation, 'currency');
         }
     }
 

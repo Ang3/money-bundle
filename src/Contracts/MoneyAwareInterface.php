@@ -9,7 +9,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Ang3\Bundle\MoneyBundle\Money;
+namespace Ang3\Bundle\MoneyBundle\Contracts;
 
 use Brick\Money\Money;
 

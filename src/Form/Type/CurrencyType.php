@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
-use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\IntlCallbackChoiceLoader;

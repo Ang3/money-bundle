@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Factory;
 
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
-use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistry;
 use Brick\Money\Currency;
 
 class MoneyEmbeddableFactory

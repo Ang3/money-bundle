@@ -28,8 +28,7 @@ class EmbeddedMoneyFormType extends AbstractType
     {
         /** @var EmbeddedMoney $embeddedMoney */
         $embeddedMoney = $options['data'];
-        $currency = $embeddedMoney->getCurrency()?->getCurrencyCode();
-        $isCurrencyFieldEnabled = null === $currency && false !== $options['currency_field'];
+        $currency = $embeddedMoney->getCurrency()->getCurrencyCode();
 
         if ($currency) {
             $builder
@@ -48,7 +47,7 @@ class EmbeddedMoneyFormType extends AbstractType
             ;
         }
 
-        if ($isCurrencyFieldEnabled) {
+        if (false !== $options['currency_field']) {
             $builder->add('currency', CurrencyType::class, [
                 'label' => 'Currency',
                 'required' => $options['required'],

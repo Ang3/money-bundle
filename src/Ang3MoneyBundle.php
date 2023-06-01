@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle;
 
-use Ang3\Bundle\MoneyBundle\Money\CurrencyRegistryProvider;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class Ang3MoneyBundle extends Bundle

@@ -30,6 +30,6 @@ class EmbeddedMoneyNormalizer implements NormalizerInterface, NormalizerAwareInt
      */
     public function normalize(mixed $object, string $format = null, array $context = []): ?array
     {
-        return !$object->isEmpty() ? (array) $this->normalizer->normalize($object->getMoney(), $format, $context) : null;
+        return (array) $this->normalizer->normalize($object->getMoney(), $format, $context);
     }
 }
