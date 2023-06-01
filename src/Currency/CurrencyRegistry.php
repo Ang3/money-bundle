@@ -32,7 +32,7 @@ class CurrencyRegistry
     /**
      * @throws InvalidConfigurationException on configuration errors
      */
-    public static function create(MoneyConfig $config, ?CurrencyFactoryInterface $currencyFactory = null): self
+    public static function create(MoneyConfig $config, CurrencyFactoryInterface $currencyFactory = null): self
     {
         $registry = new self();
         $currencyFactory = $currencyFactory ?: new CurrencyFactory();

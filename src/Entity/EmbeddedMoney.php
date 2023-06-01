@@ -286,7 +286,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     #[ORM\Column(length: 10)]
     private Currency $currency;
 
-    public function __construct(?Money $money = null)
+    public function __construct(Money $money = null)
     {
         $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
         $this->amount = $money->getMinorAmount();
