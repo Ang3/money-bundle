@@ -23,8 +23,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
         private readonly EmbeddedMoney $embeddedMoney,
         Monetizable $money = null,
         int $roundingMode = null
-    )
-    {
+    ) {
         $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
         parent::__construct($money, null, $roundingMode);
     }

@@ -305,8 +305,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
         BigNumber|int|float|string|null $amount = null,
         Currency $currency = null,
         ?bool $isMinor = true
-    ): self
-    {
+    ): self {
         $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
 
         if (null !== $amount) {
