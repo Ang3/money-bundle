@@ -19,20 +19,19 @@ use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, Monetizable $money, protected ?int $roundingMode = null)
+    public function __construct(
+        private readonly EmbeddedMoney $embeddedMoney,
+        Monetizable $money,
+        protected ?int $roundingMode = null
+    )
     {
         parent::__construct($money);
-        $this->roundingMode = $this->roundingMode ?: RoundingMode::DOWN;
     }
 
-    public function initialize(int $roundingMode = null): self
+    public function initialize(): self
     {
         $money = $this->embeddedMoney->getMoney();
-
-        $this
-            ->setDecorated($money)
-            ->setRoundingMode($roundingMode)
-        ;
+        $this->setDecorated($money);
 
         return $this;
     }
@@ -69,7 +68,10 @@ class EmbeddedMoneyModifier extends MoneyModifier
             throw new \UnexpectedValueException(sprintf('Expected money of type "%s", got "%s".', RationalMoney::class, get_debug_type($result)));
         }
 
-        return $result->to($this->embeddedMoney->getMoney()->getContext(), $this->resolveRoundingMode($roundingMode));
+        /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
+        $roundingMode = $roundingMode ?: ($this->roundingMode ?: RoundingMode::DOWN);
+
+        return $result->to($this->embeddedMoney->getMoney()->getContext(), $roundingMode);
     }
 
     /**
