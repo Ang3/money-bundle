@@ -23,8 +23,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
         private readonly EmbeddedMoney $embeddedMoney,
         Monetizable $money = null,
         protected ?int $roundingMode = null
-    )
-    {
+    ) {
         $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
         parent::__construct($money, null, $roundingMode);
     }
@@ -34,8 +33,9 @@ class EmbeddedMoneyModifier extends MoneyModifier
         $money = $this->embeddedMoney->getMoney();
 
         $this
-	        ->setDecorated($money)
-	        ->setRoundingMode($roundingMode);
+            ->setDecorated($money)
+            ->setRoundingMode($roundingMode)
+        ;
 
         return $this;
     }
