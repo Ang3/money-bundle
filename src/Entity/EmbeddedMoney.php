@@ -295,7 +295,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
 
 	public function __toString(): string
 	{
-		return (string) $this->getDecorated();
+		return (string) $this->getMoney();
 	}
 
     public static function __callStatic(string $method, array $arguments = []): self
