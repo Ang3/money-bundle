@@ -23,8 +23,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
         private readonly EmbeddedMoney $embeddedMoney,
         Monetizable $money,
         protected ?int $roundingMode = null
-    )
-    {
+    ) {
         parent::__construct($money);
     }
 
