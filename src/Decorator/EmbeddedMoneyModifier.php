@@ -22,8 +22,9 @@ class EmbeddedMoneyModifier extends MoneyModifier
     public function __construct(
         private readonly EmbeddedMoney $embeddedMoney,
         Monetizable $money = null,
-        int $roundingMode = null
-    ) {
+        protected ?int $roundingMode = null
+    )
+    {
         $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
         parent::__construct($money, null, $roundingMode);
     }
@@ -31,8 +32,10 @@ class EmbeddedMoneyModifier extends MoneyModifier
     public function initialize(int $roundingMode = null): self
     {
         $money = $this->embeddedMoney->getMoney();
-        $this->setDecorated($money);
-        $this->setRoundingMode($roundingMode);
+
+        $this
+	        ->setDecorated($money)
+	        ->setRoundingMode($roundingMode);
 
         return $this;
     }
