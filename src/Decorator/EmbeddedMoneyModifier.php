@@ -12,15 +12,17 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Decorator;
 
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
+use Brick\Math\RoundingMode;
 use Brick\Money\Contracts\Monetizable;
 use Brick\Money\Money;
 use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, Monetizable $money)
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, Monetizable $money, protected ?int $roundingMode = null)
     {
         parent::__construct($money);
+        $this->roundingMode = $this->roundingMode ?: RoundingMode::DOWN;
     }
 
     public function initialize(int $roundingMode = null): self

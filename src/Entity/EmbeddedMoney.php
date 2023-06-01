@@ -285,12 +285,12 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     #[ORM\Column(length: 10)]
     private Currency $currency;
 
-    public function __construct(Money $money = null)
+    public function __construct(Money $money = null, ?int $roundingMode = null)
     {
         $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
         $this->setMoney($money);
 
-        parent::__construct($this, $money);
+        parent::__construct($this, $money, $roundingMode);
     }
 
     public static function __callStatic(string $method, array $arguments = []): self
