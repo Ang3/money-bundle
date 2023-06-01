@@ -362,7 +362,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
 
     public function setAmount(BigNumber|string|float|int $amount): self
     {
-        parent::setAmount($amount);
+        $this->amount = $amount instanceof BigNumber ? $amount : BigNumber::of($amount);
         parent::setDecorated($this->getMoney());
 
         return $this;
