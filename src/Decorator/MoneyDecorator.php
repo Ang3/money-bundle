@@ -41,10 +41,10 @@ class MoneyDecorator implements MoneyDecoratorInterface
         $this->setDecorated($decorated);
     }
 
-	public function __toString(): string
-	{
-		return (string) $this->getDecorated();
-	}
+    public function __toString(): string
+    {
+        return (string) $this->getDecorated();
+    }
 
     public function plus(MoneyInterface|BigNumber|int|float|string $that, int $roundingMode = null): self
     {
