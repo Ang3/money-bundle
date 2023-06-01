@@ -44,7 +44,8 @@ class EmbeddedMoneyModifier extends MoneyModifier
             $decorated = $decorated->toRational();
         }
 
-        $this->decorated = $decorated;
+        parent::setDecorated($decorated);
+        $this->embeddedMoney->setMoney($this->getResult());
 
         return $this;
     }

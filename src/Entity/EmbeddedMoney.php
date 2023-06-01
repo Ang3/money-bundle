@@ -15,7 +15,6 @@ use Ang3\Bundle\MoneyBundle\Contracts\MoneyAwareInterface;
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Decorator\EmbeddedMoneyModifier;
 use Brick\Math\BigNumber;
-use Brick\Money\Contracts\Monetizable;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
@@ -333,14 +332,6 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
             CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode()),
             roundingMode: $this->resolveRoundingMode($roundingMode)
         );
-    }
-
-    public function setDecorated(Monetizable $decorated): self
-    {
-        parent::setDecorated($decorated);
-        $this->setMoney($this->getResult());
-
-        return $this;
     }
 
     public function setMoney(Money $money): self
