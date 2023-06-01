@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Decorator;
 
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Brick\Money\Contracts\Monetizable;
 use Brick\Money\Money;
@@ -18,16 +19,20 @@ use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
+    public function __construct(
+        private readonly EmbeddedMoney $embeddedMoney,
+        Monetizable $money = null,
+        int $roundingMode = null
+    )
     {
-        $money = $this->embeddedMoney->getMoney($roundingMode);
-        parent::__construct($money, $money->getContext(), $roundingMode);
+        $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
+        parent::__construct($money, null, $roundingMode);
     }
 
     public function initialize(int $roundingMode = null): self
     {
         $money = $this->embeddedMoney->getMoney();
-        $this->setDecorated($money->toRational());
+        $this->setDecorated($money);
         $this->setRoundingMode($roundingMode);
 
         return $this;
@@ -77,9 +82,6 @@ class EmbeddedMoneyModifier extends MoneyModifier
      */
     protected function newInstance(Monetizable $money): self
     {
-        $modifier = new self($this->embeddedMoney, $this->getRoundingMode());
-        $modifier->setDecorated($money);
-
-        return $modifier;
+        return new self($this->embeddedMoney, $money);
     }
 }

@@ -287,10 +287,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
 
     public function __construct(Money $money = null)
     {
-        $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
-        $this->amount = $money->getMinorAmount();
-        $this->currency = $money->getCurrency();
-        parent::__construct($this);
+        parent::__construct($this, $money);
     }
 
     public static function __callStatic(string $method, array $arguments = []): self
@@ -304,10 +301,19 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
         return self::create($amount, CurrencyRegistryProvider::getRegistry()->get($method));
     }
 
-    public static function create(BigNumber|int|float|string $amount, Currency $currency = null, ?bool $isMinor = true): self
+    public static function create(
+        BigNumber|int|float|string|null $amount = null,
+        Currency $currency = null,
+        ?bool $isMinor = true
+    ): self
     {
         $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
-        $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
+
+        if (null !== $amount) {
+            $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
+        } else {
+            $money = Money::zero($currency);
+        }
 
         return new self($money);
     }

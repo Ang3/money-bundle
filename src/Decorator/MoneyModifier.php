@@ -17,7 +17,7 @@ use Brick\Money\Money;
 
 class MoneyModifier extends MoneyDecorator implements MoneyModifierInterface
 {
-    public function __construct(Monetizable $decorated, private ?Context $context = null, protected ?int $roundingMode = null)
+    public function __construct(Monetizable $decorated, protected ?Context $context = null, protected ?int $roundingMode = null)
     {
         parent::__construct($decorated);
     }
