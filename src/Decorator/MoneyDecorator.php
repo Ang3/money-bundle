@@ -33,8 +33,8 @@ class MoneyDecorator implements MoneyDecoratorInterface
         RoundingMode::HALF_EVEN,
     ];
 
-    private Monetizable $decorated;
-	private ?int $roundingMode = null;
+    protected Monetizable $decorated;
+    protected ?int $roundingMode = null;
 
     public function __construct(Monetizable $decorated)
     {

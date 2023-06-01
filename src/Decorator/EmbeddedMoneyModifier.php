@@ -21,7 +21,7 @@ class EmbeddedMoneyModifier extends MoneyModifier
     public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $roundingMode = null)
     {
         $money = $this->embeddedMoney->getMoney($roundingMode);
-        parent::__construct($money->toRational(), $money->getContext(), $roundingMode);
+        parent::__construct($money, $money->getContext(), $roundingMode);
     }
 
     public function initialize(int $roundingMode = null): self
@@ -29,7 +29,22 @@ class EmbeddedMoneyModifier extends MoneyModifier
         $money = $this->embeddedMoney->getMoney();
         $this->setDecorated($money->toRational());
         $this->setRoundingMode($roundingMode);
-        $this->setContext($money->getContext());
+
+        return $this;
+    }
+
+    public function setDecorated(Monetizable $decorated): self
+    {
+        if (!$decorated instanceof RationalMoney) {
+            if (!$decorated instanceof Money) {
+                throw new \UnexpectedValueException(sprintf('Expected money of type "%s|%s", got "%s".', Money::class, RationalMoney::class, get_debug_type($decorated)));
+            }
+
+            $this->setContext($decorated->getContext());
+            $decorated = $decorated->toRational();
+        }
+
+        $this->decorated = $decorated;
 
         return $this;
     }

@@ -20,8 +20,8 @@ class MoneyModifier extends MoneyDecorator implements MoneyModifierInterface
     public function __construct(Monetizable $decorated, private ?Context $context = null, int $roundingMode = null)
     {
         parent::__construct($decorated);
-		$this->setRoundingMode($roundingMode);
         $this->context = $this->context ?: ($decorated instanceof Money ? $decorated->getContext() : null);
+        $this->roundingMode = $roundingMode;
     }
 
     public function getContext(): ?Context
