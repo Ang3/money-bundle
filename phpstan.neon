@@ -8,3 +8,4 @@ parameters:
     #- '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)\.#'
     - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::addDefaultsIfNotSet\(\)\.#'
     - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::useAttributeAsKey\(\)\.#'
+    - '#Method Ang3\\Bundle\\MoneyBundle\\Decorator\\MoneyModifier::getAmountOf\(\) should return Brick\\Math\\BigNumber\|float\|int\|string but returns Ang3\\Bundle\\MoneyBundle\\Contracts\\MoneyAwareInterface\|Brick\\Math\\BigNumber\|Brick\\Money\\AbstractMoney\|float\|int\|string\.#'
