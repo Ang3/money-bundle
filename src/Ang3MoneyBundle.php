@@ -23,6 +23,7 @@ class Ang3MoneyBundle extends Bundle
         parent::boot();
 
         // We provide the container to the currency provider registry to store the registry statically.
+        // By this way, embedded money object could resolve a default currency.
         CurrencyRegistryProvider::setContainer($this->container);
     }
 }
