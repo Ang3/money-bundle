@@ -12,10 +12,12 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
+use Ang3\Bundle\MoneyBundle\Form\DataTransformer\CurrencyToStringTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\IntlCallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\CurrencyType as BaseCurrencyType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,6 +32,11 @@ class CurrencyType extends AbstractType
         private readonly CurrencyRegistry $currencyRegistry,
         private readonly TranslatorInterface $translator
     ) {
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->addModelTransformer(new CurrencyToStringTransformer());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -62,7 +69,7 @@ class CurrencyType extends AbstractType
 
     public function getBlockPrefix(): string
     {
-        return 'currency';
+        return 'brick_currency';
     }
 
     public function getParent(): string

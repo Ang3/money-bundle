@@ -13,10 +13,7 @@ namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Intl\Currencies;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -26,26 +23,11 @@ class EmbeddedMoneyFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var EmbeddedMoney $embeddedMoney */
-        $embeddedMoney = $options['data'];
-        $currency = $embeddedMoney->getCurrency()->getCurrencyCode();
-
-        if ($currency) {
-            $builder
-                ->add('amount', MoneyType::class, array_merge((array) $options['amount_options'], [
-                    'required' => $options['required'],
-                    'currency' => $currency,
-                    'divisor' => 10 ** Currencies::getFractionDigits($currency),
-                ]))
-            ;
-        } else {
-            $builder
-                ->add('amount', NumberType::class, array_merge((array) $options['amount_options'], [
-                    'required' => $options['required'],
-                    'block_prefix' => 'embedded_money_amount',
-                ]))
-            ;
-        }
+        $builder
+            ->add('amount', BigNumberType::class, [
+                'required' => $options['required'],
+            ])
+        ;
 
         if (false !== $options['currency_field']) {
             $builder->add('currency', CurrencyType::class, [
@@ -62,13 +44,11 @@ class EmbeddedMoneyFormType extends AbstractType
                 'class' => EmbeddedMoney::class,
                 'required' => false,
                 'currency_field' => true,
-                'amount_options' => [],
                 'currency_options' => [],
             ])
             ->setAllowedTypes('required', 'bool')
             ->setAllowedTypes('currency', 'string')
             ->setAllowedTypes('currency_field', 'bool')
-            ->setAllowedTypes('amount_options', 'array')
             ->setAllowedTypes('currency_options', 'array')
         ;
     }
