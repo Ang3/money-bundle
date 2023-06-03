@@ -57,12 +57,12 @@ class CurrencyCollection
         return \array_key_exists($currencyCode, $this->currencies);
     }
 
-    public function getChoices(): array
+    /**
+     * @return string[]
+     */
+    public function getNames(): array
     {
-        return array_combine(
-            array_map(fn (Currency $currency) => $currency->getName(), $this->currencies),
-            array_map(fn (Currency $currency) => $currency->getCurrencyCode(), $this->currencies)
-        );
+        return $this->map(fn (Currency $currency) => $currency->getName());
     }
 
     /**
