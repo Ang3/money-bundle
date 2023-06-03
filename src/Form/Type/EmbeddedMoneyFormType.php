@@ -14,6 +14,8 @@ namespace Ang3\Bundle\MoneyBundle\Form\Type;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -35,6 +37,12 @@ class EmbeddedMoneyFormType extends AbstractType
                 'required' => $options['required'],
             ]);
         }
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options): void
+    {
+        // pass the form type option directly to the template
+        $view->vars['currency'] = $options['data'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
