@@ -13,63 +13,29 @@ namespace Ang3\Bundle\MoneyBundle\Decorator;
 
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Brick\Math\RoundingMode;
-use Brick\Money\Contracts\Monetizable;
-use Brick\Money\Money;
-use Brick\Money\RationalMoney;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(
-        private readonly EmbeddedMoney $embeddedMoney,
-        Monetizable $money,
-        protected ?int $roundingMode = null
-    ) {
-        parent::__construct($money);
-    }
-
-    public function initialize(): self
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney)
     {
-        $money = $this->embeddedMoney->getMoney();
-        $this->setDecorated($money);
-
-        return $this;
+        parent::__construct($this->embeddedMoney->getMoney());
     }
 
-    public function setDecorated(Monetizable $decorated): self
-    {
-        if (!$decorated instanceof RationalMoney) {
-            if (!$decorated instanceof Money) {
-                throw new \UnexpectedValueException(sprintf('Expected money of type "%s|%s", got "%s".', Money::class, RationalMoney::class, get_debug_type($decorated)));
-            }
-
-            $decorated = $decorated->toRational();
-        }
-
-        parent::setDecorated($decorated);
-        $this->embeddedMoney->setMoney($this->getResult());
-
-        return $this;
-    }
-
+    /**
+     * @param 0|1|2|3|4|5|6|7|8|9|null $roundingMode
+     */
     public function save(int $roundingMode = null): EmbeddedMoney
     {
-        $result = $this->getResult($roundingMode);
-        $this->embeddedMoney->setMoney($result);
+        $roundingMode = $roundingMode ?: RoundingMode::DOWN;
+        $money = $this->getResult($roundingMode);
+        $this->embeddedMoney->setMoney($money);
+        $this->setMoney($money);
 
         return $this->embeddedMoney;
     }
 
-    public function getResult(int $roundingMode = null): Money
+    public function getEmbeddedMoney(): EmbeddedMoney
     {
-        $result = $this->getDecorated();
-
-        if (!$result instanceof RationalMoney) {
-            throw new \UnexpectedValueException(sprintf('Expected money of type "%s", got "%s".', RationalMoney::class, get_debug_type($result)));
-        }
-
-        /** @var 0|1|2|3|4|5|6|7|8|9 $roundingMode */
-        $roundingMode = $roundingMode ?: ($this->roundingMode ?: RoundingMode::DOWN);
-
-        return $result->to($this->embeddedMoney->getMoney()->getContext(), $roundingMode);
+        return $this->embeddedMoney;
     }
 }

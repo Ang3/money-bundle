@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Contracts;
 
-use Brick\Money\Money;
+use Brick\Money\AbstractMoney;
 
 interface MoneyAwareInterface
 {
-    public function getMoney(): Money;
+    public function getMoney(): AbstractMoney;
 }

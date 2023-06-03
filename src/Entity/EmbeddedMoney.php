@@ -275,7 +275,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
+class EmbeddedMoney implements MoneyAwareInterface
 {
     #[ORM\Column()]
     private BigNumber $amount;
@@ -285,12 +285,9 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     #[ORM\Column(length: 10)]
     private Currency $currency;
 
-    public function __construct(Money $money = null, int $roundingMode = null)
+    public function __construct(Money $money = null)
     {
-        $money = $money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency());
-        $this->setMoney($money);
-
-        parent::__construct($this, $money, $roundingMode);
+        $this->setMoney($money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency()));
     }
 
     public function __toString(): string
@@ -302,8 +299,10 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
     {
         $amount = $arguments[0] ?? 0;
 
-        if (!\is_int($amount)) {
-            throw new \InvalidArgumentException(sprintf('The first argument #0 must be an integer (currency: "%s").', $method));
+        if (null !== $amount && !$amount instanceof BigNumber) {
+            if (!\is_int($amount) && !\is_float($amount) && !\is_string($amount)) {
+                throw new \InvalidArgumentException(sprintf('The first argument #0 must be of type "%s|int|float|string|null" (currency: "%s"), got "%s".', BigNumber::class, $method, get_debug_type($amount)));
+            }
         }
 
         return self::create($amount, CurrencyRegistryProvider::getRegistry()->get($method));
@@ -340,11 +339,7 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
 
     public function getMoney(int $roundingMode = null): Money
     {
-        return Money::ofMinor(
-            $this->amount,
-            CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode()),
-            roundingMode: $this->resolveRoundingMode($roundingMode)
-        );
+        return Money::ofMinor($this->amount, CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode()));
     }
 
     public function setMoney(Money $money): self
@@ -355,28 +350,31 @@ class EmbeddedMoney extends EmbeddedMoneyModifier implements MoneyAwareInterface
         return $this;
     }
 
+    public function modify(): EmbeddedMoneyModifier
+    {
+        return new EmbeddedMoneyModifier($this);
+    }
+
     public function getAmount(): BigNumber
     {
         return $this->amount;
     }
 
-    public function setAmount(BigNumber|string|float|int $amount): self
+    public function setAmount(BigNumber|int|float|string $amount): self
     {
         $this->amount = $amount instanceof BigNumber ? $amount : BigNumber::of($amount);
-        parent::setDecorated($this->getMoney());
 
         return $this;
     }
 
     public function getCurrency(): Currency
     {
-        return CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode());
+        return $this->currency;
     }
 
     public function setCurrency(Currency $currency): self
     {
         $this->currency = $currency;
-        parent::setDecorated($this->getMoney());
 
         return $this;
     }
