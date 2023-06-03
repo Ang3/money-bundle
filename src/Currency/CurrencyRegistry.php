@@ -18,16 +18,9 @@ use Brick\Money\Currency;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Intl\Currencies;
 
-class CurrencyRegistry
+class CurrencyRegistry extends CurrencyCollection
 {
-    /**
-     * @var array<string, Currency>
-     */
-    private array $currencies = [];
-
-    public function __construct(private ?Currency $defaultCurrency = null)
-    {
-    }
+    private ?Currency $defaultCurrency = null;
 
     /**
      * @throws InvalidConfigurationException on configuration errors
@@ -95,57 +88,12 @@ class CurrencyRegistry
 
     public function add(Currency $currency): self
     {
-        $this->currencies[$currency->getCurrencyCode()] = $currency;
+        parent::add($currency);
 
         if (!$this->defaultCurrency) {
             $this->defaultCurrency = $currency;
         }
 
         return $this;
-    }
-
-    /**
-     * @throws CurrencyException when the currency was not found
-     */
-    public function get(string $currencyCode): Currency
-    {
-        $currency = $this->currencies[$currencyCode] ?? null;
-
-        if (!$currency) {
-            throw CurrencyException::notFound($currencyCode);
-        }
-
-        return $currency;
-    }
-
-    public function contains(Currency $currency): bool
-    {
-        return $this->has($currency->getCurrencyCode());
-    }
-
-    public function has(string $currencyCode): bool
-    {
-        return \array_key_exists($currencyCode, $this->currencies);
-    }
-
-    public function getChoices(): array
-    {
-        return array_combine(
-            array_map(fn (Currency $currency) => $currency->getName(), $this->currencies),
-            array_map(fn (Currency $currency) => $currency->getCurrencyCode(), $this->currencies)
-        );
-    }
-
-    /**
-     * @return array<string, Currency>
-     */
-    public function getCurrencies(): array
-    {
-        return $this->currencies;
-    }
-
-    public function count(): int
-    {
-        return \count($this->currencies);
     }
 }
