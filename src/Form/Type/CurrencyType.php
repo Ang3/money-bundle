@@ -16,7 +16,7 @@ use Brick\Money\Currency;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\IntlCallbackChoiceLoader;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CurrencyType as BaseCurrencyType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -67,13 +67,8 @@ class CurrencyType extends AbstractType
         ;
     }
 
-    public function getBlockPrefix(): string
-    {
-        return 'brick_currency';
-    }
-
     public function getParent(): string
     {
-        return ChoiceType::class;
+        return BaseCurrencyType::class;
     }
 }
