@@ -7,10 +7,12 @@
                 class: 'form-control'
             }
         }) }}
-        {{ form_widget(form.currency, {
-            attr: {
-                class: 'form-control'
-            }
-        }) }}
+        {% if form.currency is defined %}
+            {{ form_widget(form.currency, {
+                attr: {
+                    class: 'form-control'
+                }
+            }) }}
+        {% endif %}
     </div>
 {% endblock %}
