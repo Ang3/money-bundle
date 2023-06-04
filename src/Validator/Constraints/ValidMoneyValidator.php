@@ -40,14 +40,14 @@ class ValidMoneyValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, sprintf('%s|%s', EmbeddedMoney::class, AbstractMoney::class));
         }
 
-        $amount = $value->getAmount()->toInt();
+        $amount = (string) $value->getAmount();
         $amountViolations = $this->context->getValidator()->validate($amount, $constraint->amountConstraints);
 
         foreach ($amountViolations as $violation) {
             $this->buildViolationAtPath($violation, 'amount');
         }
 
-        $currency = $value->getCurrency()->getCurrencyCode();
+        $currency = $value instanceof AbstractMoney ? $value->getCurrency()->getCurrencyCode() : (string) $value->getCurrency();
 
         if ($constraint->isoCurrency && !Currencies::exists($currency)) {
             $this->context

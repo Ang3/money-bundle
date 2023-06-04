@@ -12,13 +12,11 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
-use Ang3\Bundle\MoneyBundle\Form\DataTransformer\CurrencyToStringTransformer;
 use Brick\Money\Currency;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Loader\IntlCallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,11 +30,6 @@ class CurrencyType extends AbstractType
         private readonly CurrencyRegistry $currencyRegistry,
         private readonly TranslatorInterface $translator
     ) {
-    }
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $builder->addModelTransformer(new CurrencyToStringTransformer());
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -63,7 +56,7 @@ class CurrencyType extends AbstractType
                                 ? $currency->getCurrencyCode()
                                 : sprintf('%s (%s)', $currency->getCurrencyCode(), $this->translator->trans($currency->getName(), [], $choiceTranslationDomain, $choiceTranslationLocale));
                         }),
-                        $this->currencyRegistry->toArray()
+                        $this->currencyRegistry->getCodes()
                     );
 
                     asort($choices);

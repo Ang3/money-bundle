@@ -13,6 +13,8 @@
                     class: 'form-control'
                 }
             }) }}
+        {% elseif form.vars.currency %}
+            <span class="input-group-text">{{ form.vars.currency }}</span>
         {% endif %}
     </div>
 {% endblock %}

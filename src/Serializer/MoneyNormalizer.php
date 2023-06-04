@@ -12,11 +12,15 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Serializer;
 
 use Brick\Money\Money;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class MoneyNormalizer implements NormalizerInterface
+class MoneyNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
+    use NormalizerAwareTrait;
+
     public const LOCALE_KEY = 'locale';
 
     public function __construct(private readonly TranslatorInterface $translator)
@@ -36,9 +40,10 @@ class MoneyNormalizer implements NormalizerInterface
         $locale = $context[self::LOCALE_KEY] ?? $this->translator->getLocale();
 
         return [
-            'amount' => $object->getMinorAmount()->toInt(),
-            'currency' => $object->getCurrency()->getCurrencyCode(),
+            'amount' => (string) $object->getAmount(),
+            'minorAmount' => $object->getMinorAmount()->toInt(),
             'literal' => $object->formatTo($locale),
+            'currency' => $this->normalizer->normalize($object->getCurrency()),
         ];
     }
 }

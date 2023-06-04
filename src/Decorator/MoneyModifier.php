@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Decorator;
 
 use Ang3\Bundle\MoneyBundle\Contracts\MoneyAwareInterface;
+use Ang3\Bundle\MoneyBundle\Contracts\MoneyInterface;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
 use Brick\Math\BigNumber;
 use Brick\Math\RoundingMode;
 use Brick\Money\AbstractMoney;
@@ -39,7 +41,7 @@ class MoneyModifier implements MoneyAwareInterface
     /**
      * @param 0|1|2|3|4|5|6|7|8|9 $defaultRoundingMode
      */
-    protected function __construct(Money|RationalMoney $money, int $defaultRoundingMode = null)
+    protected function __construct(Money|RationalMoney|MoneyInterface $money, int $defaultRoundingMode = null)
     {
         $this->setMoney($money);
         $this->defaultRoundingMode = $defaultRoundingMode ?: $this->defaultRoundingMode;
@@ -50,28 +52,28 @@ class MoneyModifier implements MoneyAwareInterface
         return $this->money->__toString();
     }
 
-    public function plus(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): static
+    public function plus(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): static
     {
         $this->money = $this->money->plus($this->getAmountOf($that));
 
         return $this;
     }
 
-    public function minus(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): static
+    public function minus(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): static
     {
         $this->money = $this->money->minus($this->getAmountOf($that));
 
         return $this;
     }
 
-    public function multipliedBy(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): static
+    public function multipliedBy(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): static
     {
         $this->money = $this->money->multipliedBy($this->getAmountOf($that));
 
         return $this;
     }
 
-    public function dividedBy(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): static
+    public function dividedBy(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): static
     {
         $this->money = $this->money->dividedBy($this->getAmountOf($that));
 
@@ -118,37 +120,37 @@ class MoneyModifier implements MoneyAwareInterface
         return $this->money->isNegativeOrZero();
     }
 
-    public function compareTo(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): int
+    public function compareTo(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): int
     {
         return $this->money->getAmount()->compareTo($this->getAmountOf($that));
     }
 
-    public function isEqualTo(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): bool
+    public function isEqualTo(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): bool
     {
         return $this->money->isEqualTo($this->getAmountOf($that));
     }
 
-    public function isLessThan(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): bool
+    public function isLessThan(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): bool
     {
         return $this->money->isLessThan($this->getAmountOf($that));
     }
 
-    public function isLessThanOrEqualTo(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): bool
+    public function isLessThanOrEqualTo(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): bool
     {
         return $this->money->isLessThanOrEqualTo($this->getAmountOf($that));
     }
 
-    public function isGreaterThan(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): bool
+    public function isGreaterThan(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): bool
     {
         return $this->money->isGreaterThan($this->getAmountOf($that));
     }
 
-    public function isGreaterThanOrEqualTo(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): bool
+    public function isGreaterThanOrEqualTo(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): bool
     {
         return $this->money->isGreaterThanOrEqualTo($this->getAmountOf($that));
     }
 
-    public function isAmountAndCurrencyEqualTo(MoneyAwareInterface|AbstractMoney $that): bool
+    public function isAmountAndCurrencyEqualTo(MoneyAwareInterface|MoneyInterface|AbstractMoney $that): bool
     {
         /** @var AbstractMoney $money */
         $money = $this->getAbstractMoney($that);
@@ -161,8 +163,12 @@ class MoneyModifier implements MoneyAwareInterface
         return $this->money;
     }
 
-    public function setMoney(Money|RationalMoney $money): static
+    public function setMoney(Money|RationalMoney|MoneyInterface $money): static
     {
+        if ($money instanceof MoneyInterface) {
+            $money = Money::of($money->getAmount(), CurrencyRegistryProvider::getRegistry()->get($money->getCurrency()));
+        }
+
         if ($money instanceof Money) {
             $this->context = $money->getContext();
             $money = $money->toRational();
@@ -242,8 +248,12 @@ class MoneyModifier implements MoneyAwareInterface
     /**
      * @internal
      */
-    protected function getAmountOf(MoneyAwareInterface|AbstractMoney|BigNumber|int|float|string $that): BigNumber|int|float|string
+    protected function getAmountOf(MoneyAwareInterface|MoneyInterface|AbstractMoney|BigNumber|int|float|string $that): BigNumber|int|float|string
     {
+        if ($that instanceof MoneyInterface) {
+            return $that->getAmount();
+        }
+
         return $this->getAbstractMoney($that)?->getAmount() ?: $that;
     }
 
@@ -252,6 +262,10 @@ class MoneyModifier implements MoneyAwareInterface
      */
     protected function getAbstractMoney(mixed $that): ?AbstractMoney
     {
+        if ($that instanceof MoneyInterface) {
+            $that = Money::of($that->getAmount(), CurrencyRegistryProvider::getRegistry()->get($that->getCurrency()));
+        }
+
         if ($that instanceof MoneyAwareInterface) {
             $that = $that->getMoney();
         }

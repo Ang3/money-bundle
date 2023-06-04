@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\DependencyInjection;
 
-use Ang3\Bundle\MoneyBundle\DBAL\Types\BigNumberType;
-use Ang3\Bundle\MoneyBundle\DBAL\Types\CurrencyType;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -37,14 +35,6 @@ class Ang3MoneyExtension extends Extension implements PrependExtensionInterface
 
         if (isset($bundles['DoctrineBundle'])) {
             $container->prependExtensionConfig('doctrine', [
-                'dbal' => [
-                    'types' => [
-                        'currency' => CurrencyType::class,
-                        CurrencyType::class => CurrencyType::class,
-                        'big_number' => BigNumberType::class,
-                        BigNumberType::class => BigNumberType::class,
-                    ],
-                ],
                 'orm' => [
                     'mappings' => [
                         'Ang3MoneyBundle' => [

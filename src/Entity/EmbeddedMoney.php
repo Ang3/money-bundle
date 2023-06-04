@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
 use Ang3\Bundle\MoneyBundle\Contracts\MoneyAwareInterface;
+use Ang3\Bundle\MoneyBundle\Contracts\MoneyInterface;
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
 use Ang3\Bundle\MoneyBundle\Decorator\EmbeddedMoneyModifier;
+use Ang3\Bundle\MoneyBundle\Validator\Constraints\ValidCurrency;
 use Brick\Math\BigNumber;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @method static self AFA(int $amount)
@@ -275,15 +276,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class EmbeddedMoney implements MoneyAwareInterface
+class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
 {
-    #[ORM\Column()]
-    private BigNumber $amount;
+    #[ORM\Column(length: 100)]
+    private string $amount;
 
-    #[Assert\Range(max: 10)]
-    #[Assert\Expression(expression: 'value or this.isEmpty()', message: 'You must set a currency for the amount.')]
+    #[ValidCurrency]
     #[ORM\Column(length: 10)]
-    private Currency $currency;
+    private string $currency;
 
     public function __construct(Money $money = null)
     {
@@ -326,7 +326,7 @@ class EmbeddedMoney implements MoneyAwareInterface
 
     public static function embed(Money $money): self
     {
-        return self::create($money->getMinorAmount()->toInt(), $money->getCurrency());
+        return new self($money);
     }
 
     public static function zero(Currency $currency): self
@@ -337,15 +337,47 @@ class EmbeddedMoney implements MoneyAwareInterface
         return $embeddedMoney;
     }
 
+    public function getAmount(): string
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(BigNumber|int|float|string|null $amount): self
+    {
+        if (!$amount instanceof BigNumber) {
+            $amount = BigNumber::of(null !== $amount ? $amount : 0);
+        }
+
+        $this->amount = (string) $amount;
+
+        return $this;
+    }
+
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(Currency|string|null $currency = null): self
+    {
+        if (null !== $currency) {
+            $this->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
+        } else {
+            $this->currency = CurrencyRegistryProvider::getRegistry()->getDefaultCurrency()->getCurrencyCode();
+        }
+
+        return $this;
+    }
+
     public function getMoney(int $roundingMode = null): Money
     {
-        return Money::ofMinor($this->amount, CurrencyRegistryProvider::getRegistry()->get($this->currency->getCurrencyCode()));
+        return Money::of((string) $this->amount, CurrencyRegistryProvider::getRegistry()->get((string) $this->currency));
     }
 
     public function setMoney(Money $money): self
     {
-        $this->amount = $money->getMinorAmount();
-        $this->currency = $money->getCurrency();
+        $this->amount = (string) $money->getAmount();
+        $this->currency = (string) $money->getCurrency();
 
         return $this;
     }
@@ -353,29 +385,5 @@ class EmbeddedMoney implements MoneyAwareInterface
     public function modify(): EmbeddedMoneyModifier
     {
         return new EmbeddedMoneyModifier($this);
-    }
-
-    public function getAmount(): BigNumber
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(BigNumber|int|float|string $amount): self
-    {
-        $this->amount = $amount instanceof BigNumber ? $amount : BigNumber::of($amount);
-
-        return $this;
-    }
-
-    public function getCurrency(): Currency
-    {
-        return $this->currency;
-    }
-
-    public function setCurrency(Currency $currency): self
-    {
-        $this->currency = $currency;
-
-        return $this;
     }
 }

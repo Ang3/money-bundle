@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
 use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
-use Ang3\Bundle\MoneyBundle\Form\DataTransformer\MoneyToIntegerTransformer;
+use Ang3\Bundle\MoneyBundle\Form\DataTransformer\MoneyToFloatTransformer;
+use Brick\Money\Currency;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType as BaseMoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Intl\Currencies;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -30,9 +30,9 @@ class MoneyType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var non-empty-string $currency */
+        /** @var Currency $currency */
         $currency = $options['currency'];
-        $builder->addModelTransformer(new MoneyToIntegerTransformer($currency));
+        $builder->addModelTransformer(new MoneyToFloatTransformer($currency));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -41,13 +41,12 @@ class MoneyType extends AbstractType
 
         $resolver
             ->setDefaults([
-                'divisor' => 10 ** Currencies::getFractionDigits($defaultCurrency),
                 'currency' => $defaultCurrency,
                 'attr' => [
                     'inputmode' => 'numeric',
                 ],
             ])
-            ->setAllowedTypes('currency', 'string')
+            ->setAllowedTypes('currency', Currency::class)
         ;
     }
 

@@ -22,16 +22,10 @@ use Symfony\Component\Form\DataTransformerInterface;
 /**
  * Transforms between a Money/Money value objects and integer value.
  */
-class MoneyToIntegerTransformer implements DataTransformerInterface
+class MoneyToFloatTransformer implements DataTransformerInterface
 {
-    private Currency $currency;
-
-    /**
-     * @param non-empty-string $currency
-     */
-    public function __construct(string $currency)
+    public function __construct(private readonly Currency $currency)
     {
-        $this->currency = Currency::of($currency);
     }
 
     /**
@@ -41,19 +35,19 @@ class MoneyToIntegerTransformer implements DataTransformerInterface
      *
      * @throws MathException
      */
-    public function transform($value): int
+    public function transform($value): float
     {
         if (null === $value) {
             return 0;
         }
 
-        return $value->getMinorAmount()->toInt();
+        return $value->getAmount()->toFloat();
     }
 
     /**
      * Transforms an integer|string to a Money object.
      *
-     * @param int|string|null $value
+     * @param int|float|string|null $value
      *
      * @throws NumberFormatException
      * @throws RoundingNecessaryException
