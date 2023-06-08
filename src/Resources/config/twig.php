@@ -11,14 +11,14 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Twig\MoneyExtension;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('ang3_money.twig_extension', MoneyExtension::class)
         ->args([
-            service(MoneyConfig::class),
+            service(CurrencyRegistry::class),
             service('translator'),
         ])
         ->tag('twig.extension')

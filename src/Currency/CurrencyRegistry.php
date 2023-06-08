@@ -11,12 +11,10 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Currency;
 
-use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
 use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyException;
 use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyRegistryException;
 use Brick\Money\Currency;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Intl\Currencies;
 
 class CurrencyRegistry extends CurrencyCollection
 {
@@ -32,17 +30,16 @@ class CurrencyRegistry extends CurrencyCollection
     /**
      * @throws InvalidConfigurationException on configuration errors
      */
-    public static function create(MoneyConfig $config, CurrencyFactoryInterface $currencyFactory = null): self
+    public static function create(array $config, CurrencyFactoryInterface $currencyFactory = null): self
     {
         $registry = new self($currencyFactory);
         $currencies = [];
-        $ISOCurrencies = $config->getISOCurrencies() ?: Currencies::getCurrencyCodes();
 
-        foreach ($ISOCurrencies as $currencyCode) {
+        foreach ($config['iso_currencies'] as $currencyCode) {
             $currencies[$currencyCode] = $registry->getCurrencyFactory()->createISO($currencyCode);
         }
 
-        foreach ($config->getCustomCurrencies() as $currencyCode => $parameters) {
+        foreach ($config['custom_currencies'] as $currencyCode => $parameters) {
             if ($registry->has($currencyCode)) {
                 throw new InvalidConfigurationException('The custom currency with code "%s" is already configured as ISO currency.');
             }
@@ -50,7 +47,7 @@ class CurrencyRegistry extends CurrencyCollection
             $currencies[$currencyCode] = $registry->getCurrencyFactory()->createCustom((string) $currencyCode, (string) $parameters['name'], (int) $parameters['scale']);
         }
 
-        $defaultCurrency = $currencies[$config->getDefaultCurrency()] ?? null;
+        $defaultCurrency = $currencies[$config['default_currency']] ?? null;
 
         if (!$defaultCurrency) {
             throw new InvalidConfigurationException('The default currency configured under "ang3_money.default_currency" is neither defined as ISO or custom currency.');

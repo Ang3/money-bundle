@@ -11,22 +11,16 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Exchange\Exchanger;
 
 return static function (ContainerConfigurator $container): void {
     $container
         ->services()
-        ->set(MoneyConfig::class, MoneyConfig::class)
-        ->args([
-            param('ang3_money.config'),
-        ])
-        ->public()
         ->set(CurrencyRegistry::class, CurrencyRegistry::class)
         ->factory([CurrencyRegistry::class, 'create'])
         ->args([
-            service(MoneyConfig::class),
+            param('ang3_money.config'),
         ])
         ->public()
         ->set(Exchanger::class, Exchanger::class)

@@ -13,6 +13,7 @@ namespace Ang3\Bundle\MoneyBundle\Currency;
 
 use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyException;
 use Brick\Money\Currency;
+use Symfony\Component\Intl\Currencies;
 
 class CurrencyCollection
 {
@@ -71,6 +72,16 @@ class CurrencyCollection
     public function getCodes(): array
     {
         return $this->map(fn (Currency $currency) => $currency->getCurrencyCode());
+    }
+
+    public function getISOCurrencies(): self
+    {
+        return $this->filter(fn (Currency $currency) => Currencies::exists($currency->getCurrencyCode()));
+    }
+
+    public function getCustomCurrencies(): self
+    {
+        return $this->filter(fn (Currency $currency) => !Currencies::exists($currency->getCurrencyCode()));
     }
 
     public function filter(callable $predicate): self

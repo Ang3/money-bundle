@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Twig;
 
-use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Brick\Money\Currency;
 use Brick\Money\Money;
@@ -24,7 +24,7 @@ use Twig\TwigFunction;
 class MoneyExtension extends AbstractExtension
 {
     public function __construct(
-        private readonly MoneyConfig $moneyConfig,
+        private readonly CurrencyRegistry $currencyRegistry,
         private readonly TranslatorInterface $translator
     ) {
     }
@@ -46,7 +46,7 @@ class MoneyExtension extends AbstractExtension
 
     public function createMoney(int $amount, Currency|string|null $currency = null, bool $fromMinor = true): Money
     {
-        $currency = $currency ? ($currency instanceof Currency ? $currency : Currency::of($currency)) : $this->moneyConfig->getDefaultCurrency();
+        $currency = $currency ? ($currency instanceof Currency ? $currency : $this->currencyRegistry->get($currency)) : $this->currencyRegistry->getDefaultCurrency();
 
         return $fromMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
     }

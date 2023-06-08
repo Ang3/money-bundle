@@ -19,16 +19,16 @@ return static function (ContainerConfigurator $container): void {
     $container
         ->services()
         ->set('ang3_money.serializer.currency_normalizer', CurrencyNormalizer::class)
-	    ->args([
-			service('translator')
-	    ])
+        ->args([
+            service('translator'),
+        ])
         ->tag('serializer.normalizer')
         ->set('ang3_money.serializer.embedded_money_normalizer', EmbeddedMoneyNormalizer::class)
         ->tag('serializer.normalizer')
         ->set('ang3_money.serializer.money_normalizer', MoneyNormalizer::class)
-	    ->args([
-		    service('translator')
-	    ])
+        ->args([
+            service('translator'),
+        ])
         ->tag('serializer.normalizer')
     ;
 };

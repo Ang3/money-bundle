@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Form\Type\EmbeddedMoneyFormType;
 use Ang3\Bundle\MoneyBundle\Form\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
@@ -23,6 +24,9 @@ return static function (ContainerConfigurator $container): void {
         ->set('ang3_money.form.type.embedded_money', EmbeddedMoneyFormType::class)
         ->tag('form.type')
         ->set('ang3_money.form.type.money', MoneyType::class)
+        ->args([
+            service(CurrencyRegistry::class),
+        ])
         ->tag('form.type')
     ;
 };

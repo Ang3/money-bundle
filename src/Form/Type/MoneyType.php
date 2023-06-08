@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Form\Type;
 
-use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Form\DataTransformer\MoneyToFloatTransformer;
 use Brick\Money\Currency;
 use Symfony\Component\Form\AbstractType;
@@ -24,7 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MoneyType extends AbstractType
 {
-    public function __construct(private readonly MoneyConfig $moneyConfig)
+    public function __construct(private readonly CurrencyRegistry $currencyRegistry)
     {
     }
 
@@ -37,7 +37,7 @@ class MoneyType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $defaultCurrency = $this->moneyConfig->getDefaultCurrency();
+        $defaultCurrency = $this->currencyRegistry->getDefaultCurrency();
 
         $resolver
             ->setDefaults([

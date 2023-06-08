@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraint;
 class ValidMoney extends Constraint
 {
     public string $invalidISOCurrencyMessage = 'You must set a valid ISO currency.';
-    public string $invalidCurrencyMessage = 'The currency "{{ value }}" is not supported (Possible value: {{ values }}).';
+    public string $invalidCurrencyMessage = 'The currency "{{ value }}" is not supported.';
 
     public function __construct(
         public array $amountConstraints = [],

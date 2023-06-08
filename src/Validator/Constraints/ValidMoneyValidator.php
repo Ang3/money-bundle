@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Validator\Constraints;
 
-use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
+use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
 use Brick\Money\AbstractMoney;
 use Symfony\Component\Intl\Currencies;
@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class ValidMoneyValidator extends ConstraintValidator
 {
-    public function __construct(private readonly MoneyConfig $moneyConfig)
+    public function __construct(private readonly CurrencyRegistry $currencyRegistry)
     {
     }
 
@@ -59,14 +59,13 @@ class ValidMoneyValidator extends ConstraintValidator
             return;
         }
 
-        $allowedCurrencies = $this->moneyConfig->getISOCurrencies();
+        $allowedCurrencies = $this->currencyRegistry->getCodes();
 
         if ($allowedCurrencies && !\in_array($currency, $allowedCurrencies, true)) {
             $this->context
                 ->buildViolation($constraint->invalidCurrencyMessage)
                 ->atPath('currency')
                 ->setParameter('{{ value }}', $currency)
-                ->setParameter('{{ values }}', sprintf('"%s"', implode('", "', $allowedCurrencies)))
                 ->addViolation()
             ;
 

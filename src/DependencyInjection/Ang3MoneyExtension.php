@@ -38,7 +38,7 @@ class Ang3MoneyExtension extends ConfigurableExtension implements PrependExtensi
             $loader->load('form.php');
         }
 
-        if (ContainerBuilder::willBeAvailable('symfony/serializer', SerializerInterface::class, ['ang3/money-bundle'])) {
+        if (ContainerBuilder::willBeAvailable('symfony/serializer', SerializerInterface::class, ['ang3/money-bundle', 'symfony/translator'])) {
             $loader->load('serializer.php');
         }
 
