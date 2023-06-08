@@ -309,7 +309,7 @@ class EmbeddedMoney extends AbstractMoneyDecorator
             }
         }
 
-        return self::of($amount, CurrencyRegistryProvider::getRegistry()->get($method));
+        return self::of($amount, $method);
     }
 
     /**
@@ -322,10 +322,14 @@ class EmbeddedMoney extends AbstractMoneyDecorator
 
     public static function of(
         BigNumber|int|float|string|null $amount = null,
-        Currency $currency = null,
+        Currency|string $currency = null,
         ?bool $isMinor = true
     ): self {
-        $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
+        if (\is_string($currency)) {
+            $currency = CurrencyRegistryProvider::getRegistry()->get($currency);
+        } else {
+            $currency = $currency ?: CurrencyRegistryProvider::getRegistry()->getDefaultCurrency();
+        }
 
         if (null !== $amount) {
             $money = $isMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
