@@ -14,6 +14,7 @@ namespace Ang3\Bundle\MoneyBundle\Twig;
 use Ang3\Bundle\MoneyBundle\Contracts\MoneyInterface;
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
+use Brick\Math\BigNumber;
 use Brick\Money\AbstractMoney;
 use Brick\Money\Currency;
 use Brick\Money\Money;
@@ -47,7 +48,7 @@ class MoneyExtension extends AbstractExtension
         ];
     }
 
-    public function createMoney(int $amount, Currency|string|null $currency = null, bool $fromMinor = true): Money
+    public function createMoney(BigNumber|int|float|string $amount, Currency|string|null $currency = null, bool $fromMinor = false): Money
     {
         $currency = $currency ? ($currency instanceof Currency ? $currency : $this->currencyRegistry->get($currency)) : $this->currencyRegistry->getDefaultCurrency();
 
