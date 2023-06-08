@@ -11,8 +11,10 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Twig;
 
+use Ang3\Bundle\MoneyBundle\Contracts\MoneyInterface;
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
+use Brick\Money\AbstractMoney;
 use Brick\Money\Currency;
 use Brick\Money\Money;
 use Symfony\Component\Intl\Currencies;
@@ -52,9 +54,18 @@ class MoneyExtension extends AbstractExtension
         return $fromMinor ? Money::ofMinor($amount, $currency) : Money::of($amount, $currency);
     }
 
-    public function formatMoney(Money|EmbeddedMoney $money, string $locale = null): string
+    public function formatMoney(AbstractMoney|MoneyInterface $money, string $locale = null): string
     {
-        $money = $money instanceof EmbeddedMoney ? $money->getMoney() : $money;
+        if (!$money instanceof Money) {
+            if ($money instanceof EmbeddedMoney) {
+                $money = $money->getMoney();
+            } elseif ($money instanceof AbstractMoney) {
+                $money = Money::of($money->getAmount(), $money->getCurrency());
+            } else {
+                $money = Money::of($money->getAmount(), $this->currencyRegistry->get($money->getCurrency()));
+            }
+        }
+
         $locale = $locale ?: ($this->translator ? $this->translator->getLocale() : $this->defaultLocale);
 
         return $money->formatTo($locale);
