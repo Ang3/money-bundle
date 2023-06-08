@@ -16,7 +16,7 @@ use Ang3\Bundle\MoneyBundle\Twig\MoneyExtension;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
-        ->set('ang3_money.twig_extension', MoneyExtension::class)
+        ->set(MoneyExtension::class, MoneyExtension::class)
         ->args([
             service(CurrencyRegistry::class),
             param('ang3_money.default_locale'),
