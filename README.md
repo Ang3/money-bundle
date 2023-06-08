@@ -41,6 +41,34 @@ ang3_money: ~
 Usage
 =====
 
+Money integration
+-----------------
+
+### Embedded entity
+
+...
+
+### Forms
+
+...
+
+### Validators
+
+...
+
+### Normalizers
+
+...
+
+### Twig
+
+...
+
+Services
+--------
+
+### Exchanger
+
 ...
 
 That's it!
