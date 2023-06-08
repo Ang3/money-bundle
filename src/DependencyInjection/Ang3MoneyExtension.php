@@ -71,7 +71,7 @@ class Ang3MoneyExtension extends ConfigurableExtension implements PrependExtensi
         if (isset($bundles['TwigBundle'])) {
             $container->prependExtensionConfig('twig', [
                 'form_themes' => [
-                    '%kernel.project_dir%/vendor/ang3/money-bundle/src/Resources/views/form_theme.html.twig',
+                    '@Ang3Money::form_theme.html.twig',
                 ],
             ]);
         }
