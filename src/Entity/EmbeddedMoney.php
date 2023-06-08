@@ -348,11 +348,6 @@ class EmbeddedMoney extends AbstractMoneyDecorator
         return new self($money);
     }
 
-    public static function embed(Money $money): self
-    {
-        return new self($money);
-    }
-
     public static function zero(Currency $currency): self
     {
         $embeddedMoney = new self();
