@@ -15,6 +15,7 @@ use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyException;
 use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyRegistryException;
 use Brick\Money\Currency;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Intl\Currencies;
 
 class CurrencyRegistry extends CurrencyCollection
 {
@@ -35,8 +36,13 @@ class CurrencyRegistry extends CurrencyCollection
         $registry = new self($currencyFactory);
         $currencies = [];
 
-        foreach ($config['iso_currencies'] as $currencyCode) {
-            $currencies[$currencyCode] = $registry->getCurrencyFactory()->createISO($currencyCode);
+        if (true === $config['iso_currencies']['enabled']) {
+            $ISOCurrencies = $config['iso_currencies']['codes'] ?? null;
+            $ISOCurrencies = $ISOCurrencies ?: Currencies::getCurrencyCodes();
+
+            foreach ($ISOCurrencies as $currencyCode) {
+                $currencies[$currencyCode] = $registry->getCurrencyFactory()->createISO($currencyCode);
+            }
         }
 
         foreach ($config['custom_currencies'] as $currencyCode => $parameters) {
