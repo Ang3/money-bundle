@@ -43,7 +43,7 @@ interface Monetizable extends MoneyInterface, \Stringable
      * @throws MathException          if the argument is an invalid number or rounding is necessary
      * @throws MoneyMismatchException if the argument is a money in a different currency or in a different context
      */
-    public function plus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, ?int $roundingMode = null): self;
+    public function plus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null): self;
 
     /**
      * Returns the difference of this Money and the given amount.
@@ -64,7 +64,7 @@ interface Monetizable extends MoneyInterface, \Stringable
      * @throws MathException          if the argument is an invalid number or rounding is necessary
      * @throws MoneyMismatchException if the argument is a money in a different currency or in a different context
      */
-    public function minus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, ?int $roundingMode = null): self;
+    public function minus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null): self;
 
     /**
      * Returns the product of this Money and the given number.
@@ -80,7 +80,7 @@ interface Monetizable extends MoneyInterface, \Stringable
      *
      * @throws MathException if the argument is an invalid number or rounding is necessary
      */
-    public function multipliedBy(BigNumber|int|float|string $that, ?int $roundingMode = null): self;
+    public function multipliedBy(BigNumber|int|float|string $that, int $roundingMode = null): self;
 
     /**
      * Returns the result of the division of this Money by the given number.
@@ -96,7 +96,7 @@ interface Monetizable extends MoneyInterface, \Stringable
      *
      * @throws MathException if the argument is an invalid number or is zero, or rounding is necessary
      */
-    public function dividedBy(BigNumber|int|float|string $that, ?int $roundingMode = null): self;
+    public function dividedBy(BigNumber|int|float|string $that, int $roundingMode = null): self;
 
     /**
      * Returns a Money whose value is the absolute value of this Money.

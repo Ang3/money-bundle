@@ -44,7 +44,7 @@ class MoneyModifier extends MoneyDecorator
     /**
      * @param 0|1|2|3|4|5|6|7|8|9|null $roundingMode
      */
-    public function getResult(?int $roundingMode = null): Money
+    public function getResult(int $roundingMode = null): Money
     {
         /** @var RationalMoney $rationalMoney */
         $rationalMoney = $this->getDecorated();

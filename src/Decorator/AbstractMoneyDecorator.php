@@ -49,22 +49,22 @@ abstract class AbstractMoneyDecorator implements MoneyDecoratorInterface
      */
     abstract public static function create(Money|RationalMoney|MoneyInterface $decorated, int $defaultRoundingMode = null): MoneyDecoratorInterface;
 
-    public function plus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, ?int $roundingMode = null): MoneyDecoratorInterface
+    public function plus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null): MoneyDecoratorInterface
     {
         return $this->newInstance($this->getDecorated()->plus($this->getAmountOf($that), $this->resolveRoundingMode($roundingMode)));
     }
 
-    public function minus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, ?int $roundingMode = null): MoneyDecoratorInterface
+    public function minus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null): MoneyDecoratorInterface
     {
         return $this->newInstance($this->getDecorated()->minus($this->getAmountOf($that), $this->resolveRoundingMode($roundingMode)));
     }
 
-    public function multipliedBy(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, ?int $roundingMode = null): MoneyDecoratorInterface
+    public function multipliedBy(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null): MoneyDecoratorInterface
     {
         return $this->newInstance($this->getDecorated()->multipliedBy($this->getAmountOf($that), $this->resolveRoundingMode($roundingMode)));
     }
 
-    public function dividedBy(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, ?int $roundingMode = null): MoneyDecoratorInterface
+    public function dividedBy(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null): MoneyDecoratorInterface
     {
         return $this->newInstance($this->getDecorated()->dividedBy($this->getAmountOf($that), $this->resolveRoundingMode($roundingMode)));
     }
@@ -190,7 +190,7 @@ abstract class AbstractMoneyDecorator implements MoneyDecoratorInterface
      *
      * @return 0|1|2|3|4|5|6|7|8|9
      */
-    protected function resolveRoundingMode(?int $roundingMode = null): int
+    protected function resolveRoundingMode(int $roundingMode = null): int
     {
         return $roundingMode ?: $this->defaultRoundingMode;
     }
