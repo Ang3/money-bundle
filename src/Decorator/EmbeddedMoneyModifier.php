@@ -16,9 +16,12 @@ use Brick\Math\RoundingMode;
 
 class EmbeddedMoneyModifier extends MoneyModifier
 {
-    public function __construct(private readonly EmbeddedMoney $embeddedMoney)
+    /**
+     * @param 0|1|2|3|4|5|6|7|8|9|null $defaultRoundingMode
+     */
+    public function __construct(private readonly EmbeddedMoney $embeddedMoney, int $defaultRoundingMode = null)
     {
-        parent::__construct($this->embeddedMoney->getMoney());
+        parent::__construct($this->embeddedMoney->getMoney(), $defaultRoundingMode);
     }
 
     /**
@@ -28,8 +31,6 @@ class EmbeddedMoneyModifier extends MoneyModifier
     {
         $newEmbeddedMoney = new EmbeddedMoney();
         $modifier = new self($newEmbeddedMoney);
-        $modifier->money = clone $this->money;
-        $modifier->context = $this->context ? clone $this->context : null;
         $modifier->save($roundingMode);
 
         return $modifier;
@@ -43,7 +44,6 @@ class EmbeddedMoneyModifier extends MoneyModifier
         $roundingMode = $roundingMode ?: RoundingMode::DOWN;
         $money = $this->getResult($roundingMode);
         $this->embeddedMoney->setMoney($money);
-        $this->setMoney($money);
 
         return $this->embeddedMoney;
     }

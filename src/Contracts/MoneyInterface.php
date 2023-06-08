@@ -11,11 +11,9 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Contracts;
 
-use Brick\Math\BigNumber;
-
 interface MoneyInterface
 {
-    public function getAmount(): BigNumber|int|float|string;
+    public function getAmount(): string;
 
     public function getCurrency(): string;
 }

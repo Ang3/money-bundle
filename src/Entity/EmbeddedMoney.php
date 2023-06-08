@@ -11,14 +11,15 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Entity;
 
-use Ang3\Bundle\MoneyBundle\Contracts\MoneyAwareInterface;
 use Ang3\Bundle\MoneyBundle\Contracts\MoneyInterface;
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistryProvider;
+use Ang3\Bundle\MoneyBundle\Decorator\AbstractMoneyDecorator;
 use Ang3\Bundle\MoneyBundle\Decorator\EmbeddedMoneyModifier;
 use Ang3\Bundle\MoneyBundle\Validator\Constraints\ValidCurrency;
 use Brick\Math\BigNumber;
 use Brick\Money\Currency;
 use Brick\Money\Money;
+use Brick\Money\RationalMoney;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -276,7 +277,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @method static self PLN(int $amount)
  */
 #[ORM\Embeddable]
-class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
+class EmbeddedMoney extends AbstractMoneyDecorator
 {
     #[ORM\Column(length: 100)]
     private string $amount;
@@ -285,9 +286,12 @@ class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
     #[ORM\Column(length: 10)]
     private string $currency;
 
-    public function __construct(Money $money = null)
+    /**
+     * @param 0|1|2|3|4|5|6|7|8|9|null $defaultRoundingMode
+     */
+    public function __construct(Money|MoneyInterface|RationalMoney $money = null, int $defaultRoundingMode = null)
     {
-        $this->setMoney($money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency()));
+        parent::__construct($money ?: Money::zero(CurrencyRegistryProvider::getRegistry()->getDefaultCurrency()), $defaultRoundingMode);
     }
 
     public function __toString(): string
@@ -305,10 +309,18 @@ class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
             }
         }
 
-        return self::create($amount, CurrencyRegistryProvider::getRegistry()->get($method));
+        return self::of($amount, CurrencyRegistryProvider::getRegistry()->get($method));
     }
 
-    public static function create(
+    /**
+     * @param 0|1|2|3|4|5|6|7|8|9|null $defaultRoundingMode
+     */
+    public static function create(Money|MoneyInterface|RationalMoney $decorated, int $defaultRoundingMode = null): self
+    {
+        return new self($decorated, $defaultRoundingMode);
+    }
+
+    public static function of(
         BigNumber|int|float|string|null $amount = null,
         Currency $currency = null,
         ?bool $isMinor = true
@@ -342,7 +354,7 @@ class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
         return $this->amount;
     }
 
-    public function setAmount(BigNumber|int|float|string|null $amount): self
+    public function setAmount(BigNumber|int|float|string|null $amount): static
     {
         if (!$amount instanceof BigNumber) {
             $amount = BigNumber::of(null !== $amount ? $amount : 0);
@@ -358,7 +370,7 @@ class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
         return $this->currency;
     }
 
-    public function setCurrency(Currency|string|null $currency = null): self
+    public function setCurrency(Currency|string|null $currency = null): static
     {
         if (null !== $currency) {
             $this->currency = $currency instanceof Currency ? $currency->getCurrencyCode() : $currency;
@@ -369,12 +381,12 @@ class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
         return $this;
     }
 
-    public function getMoney(int $roundingMode = null): Money
+    public function getMoney(): Money
     {
-        return Money::of((string) $this->amount, CurrencyRegistryProvider::getRegistry()->get((string) $this->currency));
+        return Money::of($this->amount, CurrencyRegistryProvider::getRegistry()->get($this->currency));
     }
 
-    public function setMoney(Money $money): self
+    public function setMoney(Money|MoneyInterface|RationalMoney $money): static
     {
         $this->amount = (string) $money->getAmount();
         $this->currency = (string) $money->getCurrency();
@@ -382,8 +394,23 @@ class EmbeddedMoney implements MoneyInterface, MoneyAwareInterface
         return $this;
     }
 
-    public function modify(): EmbeddedMoneyModifier
+    public function getDecorated(): Money|RationalMoney
     {
-        return new EmbeddedMoneyModifier($this);
+        return $this->getMoney();
+    }
+
+    public function setDecorated(Money|MoneyInterface|RationalMoney $decorated): static
+    {
+        $this->setMoney($decorated);
+
+        return $this;
+    }
+
+    protected function newInstance(Money|MoneyInterface|RationalMoney $money): EmbeddedMoneyModifier
+    {
+        $modifier = new EmbeddedMoneyModifier($this);
+        $modifier->setDecorated($money);
+
+        return $modifier;
     }
 }
