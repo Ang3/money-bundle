@@ -44,7 +44,9 @@ Usage
 Money integration
 -----------------
 
-### Embedded entity
+### Doctrine
+
+#### Embedded entity
 
 ...
 
