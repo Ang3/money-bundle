@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Exchange;
 
 use Ang3\Bundle\MoneyBundle\Currency\CurrencyRegistry;
-use Ang3\Bundle\MoneyBundle\Exception\CurrencyException;
+use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyException;
 use Brick\Math\BigNumber;
 use Brick\Math\Exception\RoundingNecessaryException;
 use Brick\Math\RoundingMode;

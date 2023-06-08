@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Currency;
 
-use Ang3\Bundle\MoneyBundle\Exception\CurrencyException;
+use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyException;
 use Brick\Money\Currency;
 
 class CurrencyCollection

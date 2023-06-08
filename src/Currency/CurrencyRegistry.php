@@ -12,29 +12,34 @@ declare(strict_types=1);
 namespace Ang3\Bundle\MoneyBundle\Currency;
 
 use Ang3\Bundle\MoneyBundle\Config\MoneyConfig;
-use Ang3\Bundle\MoneyBundle\Exception\CurrencyException;
-use Ang3\Bundle\MoneyBundle\Exception\CurrencyRegistryException;
+use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyException;
+use Ang3\Bundle\MoneyBundle\Currency\Exception\CurrencyRegistryException;
 use Brick\Money\Currency;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Intl\Currencies;
 
 class CurrencyRegistry extends CurrencyCollection
 {
+    private readonly CurrencyFactoryInterface $currencyFactory;
     private ?Currency $defaultCurrency = null;
+
+    public function __construct(?CurrencyFactoryInterface $currencyFactory = null)
+    {
+        parent::__construct();
+        $this->currencyFactory = $currencyFactory ?: new CurrencyFactory();
+    }
 
     /**
      * @throws InvalidConfigurationException on configuration errors
      */
-    public static function create(MoneyConfig $config, CurrencyFactoryInterface $currencyFactory = null): self
+    public static function create(MoneyConfig $config, ?CurrencyFactoryInterface $currencyFactory = null): self
     {
-        $registry = new self();
-        $currencyFactory = $currencyFactory ?: new CurrencyFactory();
+        $registry = new self($currencyFactory);
         $currencies = [];
-
         $ISOCurrencies = $config->getISOCurrencies() ?: Currencies::getCurrencyCodes();
 
         foreach ($ISOCurrencies as $currencyCode) {
-            $currencies[$currencyCode] = $currencyFactory->createISO($currencyCode);
+            $currencies[$currencyCode] = $registry->getCurrencyFactory()->createISO($currencyCode);
         }
 
         foreach ($config->getCustomCurrencies() as $currencyCode => $parameters) {
@@ -42,7 +47,7 @@ class CurrencyRegistry extends CurrencyCollection
                 throw new InvalidConfigurationException('The custom currency with code "%s" is already configured as ISO currency.');
             }
 
-            $currencies[$currencyCode] = $currencyFactory->createCustom((string) $currencyCode, (string) $parameters['name'], (int) $parameters['scale']);
+            $currencies[$currencyCode] = $registry->getCurrencyFactory()->createCustom((string) $currencyCode, (string) $parameters['name'], (int) $parameters['scale']);
         }
 
         $defaultCurrency = $currencies[$config->getDefaultCurrency()] ?? null;
@@ -95,5 +100,10 @@ class CurrencyRegistry extends CurrencyCollection
         }
 
         return $this;
+    }
+
+    public function getCurrencyFactory(): CurrencyFactoryInterface
+    {
+        return $this->currencyFactory;
     }
 }
