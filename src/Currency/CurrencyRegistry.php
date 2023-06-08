@@ -23,7 +23,7 @@ class CurrencyRegistry extends CurrencyCollection
     private readonly CurrencyFactoryInterface $currencyFactory;
     private ?Currency $defaultCurrency = null;
 
-    public function __construct(?CurrencyFactoryInterface $currencyFactory = null)
+    public function __construct(CurrencyFactoryInterface $currencyFactory = null)
     {
         parent::__construct();
         $this->currencyFactory = $currencyFactory ?: new CurrencyFactory();
@@ -32,7 +32,7 @@ class CurrencyRegistry extends CurrencyCollection
     /**
      * @throws InvalidConfigurationException on configuration errors
      */
-    public static function create(MoneyConfig $config, ?CurrencyFactoryInterface $currencyFactory = null): self
+    public static function create(MoneyConfig $config, CurrencyFactoryInterface $currencyFactory = null): self
     {
         $registry = new self($currencyFactory);
         $currencies = [];
