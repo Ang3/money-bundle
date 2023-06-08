@@ -36,7 +36,7 @@ class CurrencyRegistry extends CurrencyCollection
         $registry = new self($currencyFactory);
         $currencies = [];
 
-        if (true === $config['iso_currencies']['enabled']) {
+        if (true === ($config['iso_currencies']['enabled'] ?? false)) {
             $ISOCurrencies = $config['iso_currencies']['codes'] ?? null;
             $ISOCurrencies = $ISOCurrencies ?: Currencies::getCurrencyCodes();
 
@@ -45,7 +45,8 @@ class CurrencyRegistry extends CurrencyCollection
             }
         }
 
-        foreach ($config['custom_currencies'] as $currencyCode => $parameters) {
+        $customCurrencies = $config['custom_currencies'] ?? [];
+        foreach ($customCurrencies as $currencyCode => $parameters) {
             if ($registry->has($currencyCode)) {
                 throw new InvalidConfigurationException('The custom currency with code "%s" is already configured as ISO currency.');
             }
