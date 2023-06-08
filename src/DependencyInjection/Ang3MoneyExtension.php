@@ -26,6 +26,8 @@ class Ang3MoneyExtension extends ConfigurableExtension implements PrependExtensi
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
         $container->setParameter('ang3_money.config', $mergedConfig);
+        $defaultLocale = $container->hasParameter('kernel.default_locale') ? $container->getParameter('kernel.default_locale') : $mergedConfig['default_locale'];
+        $container->setParameter('ang3_money.default_locale', $defaultLocale);
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.php');
@@ -38,7 +40,7 @@ class Ang3MoneyExtension extends ConfigurableExtension implements PrependExtensi
             $loader->load('form.php');
         }
 
-        if (ContainerBuilder::willBeAvailable('symfony/serializer', SerializerInterface::class, ['ang3/money-bundle', 'symfony/translator'])) {
+        if (ContainerBuilder::willBeAvailable('symfony/serializer', SerializerInterface::class, ['ang3/money-bundle'])) {
             $loader->load('serializer.php');
         }
 

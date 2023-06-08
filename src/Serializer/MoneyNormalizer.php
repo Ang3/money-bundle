@@ -23,7 +23,7 @@ class MoneyNormalizer implements NormalizerInterface, NormalizerAwareInterface
 
     public const LOCALE_KEY = 'locale';
 
-    public function __construct(private readonly TranslatorInterface $translator)
+    public function __construct(private readonly ?TranslatorInterface $translator = null)
     {
     }
 
@@ -37,7 +37,7 @@ class MoneyNormalizer implements NormalizerInterface, NormalizerAwareInterface
      */
     public function normalize(mixed $object, string $format = null, array $context = []): ?array
     {
-        $locale = $context[self::LOCALE_KEY] ?? $this->translator->getLocale();
+        $locale = $context[self::LOCALE_KEY] ?? ($this->translator ? $this->translator->getLocale() : 'en');
 
         return [
             'amount' => (string) $object->getAmount(),

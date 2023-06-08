@@ -17,7 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CurrencyNormalizer implements NormalizerInterface
 {
-    public function __construct(private readonly TranslatorInterface $translator)
+    public function __construct(private readonly ?TranslatorInterface $translator = null)
     {
     }
 
@@ -35,7 +35,7 @@ class CurrencyNormalizer implements NormalizerInterface
             'code' => $object->getCurrencyCode(),
             'numericCode' => $object->getNumericCode(),
             'scale' => $object->getDefaultFractionDigits(),
-            'name' => $this->translator->trans($object->getName()),
+            'name' => $this->translator ? $this->translator->trans($object->getName()) : $object->getName(),
         ];
     }
 }

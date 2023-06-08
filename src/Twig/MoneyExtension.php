@@ -25,7 +25,8 @@ class MoneyExtension extends AbstractExtension
 {
     public function __construct(
         private readonly CurrencyRegistry $currencyRegistry,
-        private readonly TranslatorInterface $translator
+        private readonly string $defaultLocale,
+        private readonly ?TranslatorInterface $translator = null
     ) {
     }
 
@@ -54,7 +55,7 @@ class MoneyExtension extends AbstractExtension
     public function formatMoney(Money|EmbeddedMoney $money, string $locale = null): string
     {
         $money = $money instanceof EmbeddedMoney ? $money->getMoney() : $money;
-        $locale = $locale ?: $this->translator->getLocale();
+        $locale = $locale ?: ($this->translator ? $this->translator->getLocale() : $this->defaultLocale);
 
         return $money->formatTo($locale);
     }

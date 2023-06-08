@@ -19,7 +19,8 @@ return static function (ContainerConfigurator $container): void {
         ->set('ang3_money.twig_extension', MoneyExtension::class)
         ->args([
             service(CurrencyRegistry::class),
-            service('translator'),
+            param('ang3_money.default_locale'),
+            service('translator')->nullOnInvalid(),
         ])
         ->tag('twig.extension')
     ;

@@ -16,6 +16,7 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Intl\Currencies;
+use Symfony\Component\Intl\Locales;
 
 class Configuration implements ConfigurationInterface
 {
@@ -29,6 +30,9 @@ class Configuration implements ConfigurationInterface
             ->fixXmlConfig('custom_currency', 'custom_currencies')
             ->children()
             ->scalarNode('default_currency')->cannotBeEmpty()->defaultValue(Ang3MoneyBundle::DEFAULT_CURRENCY)->end()
+            ->scalarNode('default_locale')->cannotBeEmpty()->defaultValue(Ang3MoneyBundle::DEFAULT_LOCALE)
+            ->validate()->ifNotInArray(array_keys(Locales::getNames()))->thenInvalid('Invalid locale "%s".')->end()
+            ->end()
             ->append($this->addIsoCurrenciesNode())
             ->append($this->addCustomCurrenciesNode())
             ->end()

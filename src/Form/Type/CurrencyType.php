@@ -28,7 +28,7 @@ class CurrencyType extends AbstractType
 {
     public function __construct(
         private readonly CurrencyRegistry $currencyRegistry,
-        private readonly TranslatorInterface $translator
+        private readonly ?TranslatorInterface $translator = null
     ) {
     }
 
@@ -39,7 +39,7 @@ class CurrencyType extends AbstractType
                 'choice_label' => function (Currency $currency) {
                     return $currency->getName() === $currency->getCurrencyCode()
                         ? $currency->getCurrencyCode()
-                        : sprintf('%s (%s)', $currency->getCurrencyCode(), $this->translator->trans($currency->getName()));
+                        : sprintf('%s (%s)', $currency->getCurrencyCode(), $this->translator ? $this->translator->trans($currency->getName()) : $currency->getName());
                 },
             ])
             ->addNormalizer('choice_loader', function (Options $options) {
@@ -54,7 +54,7 @@ class CurrencyType extends AbstractType
                         $this->currencyRegistry->map(function (Currency $currency) use ($choiceTranslationDomain, $choiceTranslationLocale) {
                             return $currency->getName() === $currency->getCurrencyCode()
                                 ? $currency->getCurrencyCode()
-                                : sprintf('%s (%s)', $currency->getCurrencyCode(), $this->translator->trans($currency->getName(), [], $choiceTranslationDomain, $choiceTranslationLocale));
+                                : sprintf('%s (%s)', $currency->getCurrencyCode(), $this->translator ? $this->translator->trans($currency->getName(), [], $choiceTranslationDomain, $choiceTranslationLocale) : $currency->getName());
                         }),
                         $this->currencyRegistry->getCodes()
                     );
