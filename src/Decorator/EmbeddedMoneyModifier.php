@@ -11,9 +11,21 @@ declare(strict_types=1);
 
 namespace Ang3\Bundle\MoneyBundle\Decorator;
 
+use Ang3\Bundle\MoneyBundle\Contracts\MoneyInterface;
 use Ang3\Bundle\MoneyBundle\Entity\EmbeddedMoney;
+use Brick\Math\BigNumber;
 use Brick\Math\RoundingMode;
+use Brick\Money\AbstractMoney;
 
+/**
+ * @method self plus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null)
+ * @method self minus(MoneyInterface|AbstractMoney|BigNumber|int|float|string $that, int $roundingMode = null)
+ * @method self multipliedBy(BigNumber|int|float|string $that, int $roundingMode = null)
+ * @method self dividedBy(BigNumber|int|float|string $that, int $roundingMode = null)
+ * @method self toZero()
+ * @method self abs()
+ * @method self negated()
+ */
 class EmbeddedMoneyModifier extends MoneyModifier
 {
     /**
