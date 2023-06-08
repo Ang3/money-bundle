@@ -81,7 +81,7 @@ abstract class AbstractMoneyDecorator implements MoneyDecoratorInterface
 
     public function toZero(): MoneyDecoratorInterface
     {
-        return $this->setAmount(0);
+        return $this->newInstance($this->getDecorated()->multipliedBy(0));
     }
 
     public function isZero(): bool
